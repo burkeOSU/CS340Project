@@ -32,20 +32,72 @@ app.get('/', async function (req, res) {
     }
 });
 
-app.get('/bsg-people', async function (req, res) {
+app.get('/megacorporations', async function (req, res) {
     try {
-        // Create and execute our queries
-        // In query1, we use a JOIN clause to display the names of the homeworlds
-        const query1 = `SELECT bsg_people.id, bsg_people.fname, bsg_people.lname, \
-            bsg_planets.name AS 'homeworld', bsg_people.age FROM bsg_people \
-            LEFT JOIN bsg_planets ON bsg_people.homeworld = bsg_planets.id;`;
-        const query2 = 'SELECT * FROM bsg_planets;';
-        const [people] = await db.query(query1);
-        const [homeworlds] = await db.query(query2);
+        const query = `SELECT * FROM Megacorporations`;
+        const [megacorporations] = await db.query(query);
+        // Render the megacorporations.hbs file, and also send the renderer
+        res.render('Megacorporations', { megacorporations: megacorporations });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
 
-        // Render the bsg-people.hbs file, and also send the renderer
-        //  an object that contains our bsg_people and bsg_homeworld information
-        res.render('bsg-people', { people: people, homeworlds: homeworlds });
+app.get('/breaches', async function (req, res) {
+    try {
+        const query = `SELECT * FROM Breaches`;
+        const [breaches] = await db.query(query);
+        // Render the breaches.hbs file, and also send the renderer
+        res.render('Breaches', { breaches: breaches });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+app.get('/cyberagents', async function (req, res) {
+    try {
+        const query = `SELECT * FROM CyberAgents`;
+        const [cyberagents] = await db.query(query);
+        // Render the cyberagents.hbs file, and also send the renderer
+        res.render('CyberAgents', { cyberagents: cyberagents });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+app.get('/assets', async function (req, res) {
+    try {
+        const query = `SELECT * FROM Assets`;
+        const [assets] = await db.query(query);
+        // Render the assets.hbs file, and also send the renderer
+        res.render('Assets', { assets: assets });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+app.get('/locations', async function (req, res) {
+    try {
+        const query = `SELECT * FROM Locations`;
+        const [locations] = await db.query(query);
+        // Render the locations.hbs file, and also send the renderer
+        res.render('Locations', { locations: locations });
     } catch (error) {
         console.error('Error executing queries:', error);
         // Send a generic error message to the browser
