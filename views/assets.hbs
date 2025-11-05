@@ -62,7 +62,7 @@
     <label for='update_asset_id'>Asset to Update: </label>
     <select name='update_asset_id' id='update_asset_id' required>
         <option value='' disabled selected>Select a Asset</option>
-        {{#each assets}}
+        {{#each Assets}}
         <option value='{{this.asset_id}}'>
             {{this.asset_id}} - {{this.name}}
         </option>

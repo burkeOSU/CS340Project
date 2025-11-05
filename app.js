@@ -37,7 +37,7 @@ app.get('/megacorporations', async function (req, res) {
         const query = `SELECT * FROM Megacorporations`;
         const [megacorporations] = await db.query(query);
         // Render the megacorporations.hbs file, and also send the renderer
-        res.render('Megacorporations', { megacorporations: megacorporations });
+        res.render('megacorporations', { megacorporations: megacorporations });
     } catch (error) {
         console.error('Error executing queries:', error);
         // Send a generic error message to the browser
@@ -52,7 +52,7 @@ app.get('/breaches', async function (req, res) {
         const query = `SELECT * FROM Breaches`;
         const [breaches] = await db.query(query);
         // Render the breaches.hbs file, and also send the renderer
-        res.render('Breaches', { breaches: breaches });
+        res.render('breaches', { breaches: breaches });
     } catch (error) {
         console.error('Error executing queries:', error);
         // Send a generic error message to the browser
@@ -67,7 +67,7 @@ app.get('/cyberagents', async function (req, res) {
         const query = `SELECT * FROM CyberAgents`;
         const [cyberagents] = await db.query(query);
         // Render the cyberagents.hbs file, and also send the renderer
-        res.render('CyberAgents', { cyberagents: cyberagents });
+        res.render('cyberagents', { cyberagents: cyberagents });
     } catch (error) {
         console.error('Error executing queries:', error);
         // Send a generic error message to the browser
@@ -82,7 +82,7 @@ app.get('/assets', async function (req, res) {
         const query = `SELECT * FROM Assets`;
         const [assets] = await db.query(query);
         // Render the assets.hbs file, and also send the renderer
-        res.render('Assets', { assets: assets });
+        res.render('assets', { assets: assets });
     } catch (error) {
         console.error('Error executing queries:', error);
         // Send a generic error message to the browser
@@ -97,7 +97,7 @@ app.get('/locations', async function (req, res) {
         const query = `SELECT * FROM Locations`;
         const [locations] = await db.query(query);
         // Render the locations.hbs file, and also send the renderer
-        res.render('Locations', { locations: locations });
+        res.render('locations', { locations: locations });
     } catch (error) {
         console.error('Error executing queries:', error);
         // Send a generic error message to the browser
