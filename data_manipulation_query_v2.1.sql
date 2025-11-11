@@ -124,3 +124,36 @@ ORDER BY Megacorporations.name, Breaches.date_of_breach DESC;
 	DELETE FROM Locations
 	WHERE location_id = @location_idInput
 ----------------------------
+
+----------------------------
+-- MEGACORPORATIONSHASLOCATIONS:
+
+-- UPDATE:
+	SELECT * FROM MegacorporationsHasLocations
+	UPDATE MegacorporationsHasLocations
+	SET @Location_id = @newLocation_idInput
+	WHERE @Corp_id = @Corp_idInput;
+
+----------------------------
+
+----------------------------
+-- ASSETSHASBREACHES:
+
+-- UPDATE:
+	SELECT * FROM AssetsHasBreaches
+	UPDATE AssetsHasBreaches
+	SET @Asset_id = @newAsset_idInput
+	WHERE @Breach_id = @Breach_idInput;
+
+----------------------------
+
+----------------------------
+-- BREACHESHASCYBERAGENTS:
+
+-- UPDATE:
+	SELECT * FROM BreachesHasCyberAgents
+	UPDATE BreachesHasCyberAgents
+	SET @CyberAgent_id = @newCyberAgent_idInput
+	WHERE @Breach_id = @Breach_idInput;
+
+----------------------------
