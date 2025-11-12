@@ -3,13 +3,13 @@
 {{! READ table }}
 <table>
     <thead>
-        {{! For the table header row, we print the DB attribute names }}
+        {{! Replace Attributes with header names for header row}}
         <tr>
-            {{#each assets.[0]}}
-            <th>
-                {{@key}}
-            </th>
-            {{/each}}
+            <th>ID</th>
+            <th>Name</th>
+            <th>Asset Type</th>
+            <th>Status</th>
+            <th>Value ($)</th>
             <th></th>
         </tr>
     </thead>
@@ -61,8 +61,9 @@
 <form class='cuForm' id='update_asset_form'>
     <label for='update_asset_id'>Asset to Update: </label>
     <select name='update_asset_id' id='update_asset_id' required>
-        <option value='' disabled selected>Select a Asset</option>
-        {{#each Assets}}
+        {{! Select asset drop-down option }}
+        <option value='' disabled selected>Select an Asset</option>
+        {{#each assets}}
         <option value='{{this.asset_id}}'>
             {{this.asset_id}} - {{this.name}}
         </option>

@@ -1,0 +1,94 @@
+<h1>Megacorporation Locations</h1>
+
+{{! READ table }}
+<table>
+    <thead>
+        {{! Replace Attributes with header names for header row}}
+        <tr>
+            <th>Megacorp ID</th>
+            <th>Megacorporation Name</th>
+            <th>Location ID</th>
+            <th>Location Name</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{! For each row, print the megacorp id, megacorp name, location id and location name}}
+        {{#each megacorporationshaslocations}}
+        <tr>
+            <td>{{this.megacorp_id}}</td>
+            <td>{{this.megacorporation_name}}</td>
+            <td>{{this.location_id}}</td>
+            <td>{{this.location_name}}</td>
+
+            {{! DELETE form }}
+            <form id='delete_megacorp_location_form'>
+                <input type='hidden' name='delete_megacorp_id' value='{{this.megacorp_id}}' />
+                <input type='hidden' name='delete_location_id' value='{{this.location_id}}' />
+                <td>
+                    <button type='submit'>
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+{{! CREATE form }}
+<h2>Assign a Megacorporation to a Location</h2>
+<form class='cuForm' id='create_megacorp_location_form'>
+    <label for='create_megacorp_id'>Megacorporation: </label>
+    <select name='create_megacorp_id' id='create_megacorp_id' required>
+        {{! Select megacorp drop-down option }}
+        <option value='' disabled selected>Select a Megacorporation</option>
+        {{#each megacorporationshaslocations}}
+        <option value='{{this.megacorp_id}}' required>
+            {{this.megacorp_id}} - {{this.megacorporation_name}}
+        </option>
+        {{/each}}
+    </select>
+
+    <label for='create_location_id'>Location: </label>
+    <select name='create_location_id' id='create_location_id' required>
+        {{! Select location drop-down option }}
+        <option value='' disabled selected>Select a Location</option>
+        {{#each megacorporationshaslocations}}
+        <option value='{{this.location_id}}' required>
+            {{this.location_id}} - {{this.location_name}}
+        </option>
+        {{/each}}
+    </select>
+
+    <input type='submit' />
+</form>
+
+{{! UPDATE form }}
+<h2>Update a Megacorporation/Location Relationship</h2>
+<form class='cuForm' id='update_megacorp_location_form'>
+    <label for='update_megacorp_id'>Megacorporation: </label>
+    <select name='update_megacorp_id' id='update_megacorp_id' required>
+        {{! Select megacorporation drop-down option }}
+        <option value='' disabled selected>Select a Megacorporation</option>
+        {{#each megacorporationshaslocations}}
+        <option value='{{this.megacorp_id}}' required>
+            {{this.megacorp_id}} - {{this.megacorporation_name}}
+        </option>
+        {{/each}}
+    </select>
+
+    <label for='update_location_id'>Location: </label>
+    <select name='update_location_id' id='update_location_id' required>
+        {{! Select location drop-down option }}
+        <option value='' disabled selected>Select a Location</option>
+        {{#each megacorporationshaslocations}}
+        <option value='{{this.location_id}}' required>
+            {{this.location_id}} - {{this.location_name}}
+        </option>
+        {{/each}}
+    </select>
+
+    <input type='submit' />
+</form>

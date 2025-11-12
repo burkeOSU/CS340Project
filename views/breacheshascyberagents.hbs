@@ -1,0 +1,93 @@
+<h1>Breach Perpetrators</h1>
+
+{{! READ table }}
+<table>
+    <thead>
+        {{! Replace Attributes with header names for header row}}
+        <tr>
+            <th>Cyber Agent ID</th>
+            <th>Cyber Agent Name</th>
+            <th>Breach ID</th>
+            <th>Datetime Of Breach</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{! For each row, print the breach id, date of breach, agent id and agent name}}
+        {{#each breacheshascyberagents}}
+        <tr>
+            <td>{{this.agent_id}}</td>
+            <td>{{this.agent_name}}</td>
+            <td>{{this.breach_id}}</td>
+            <td>{{this.date_of_breach}}</td>
+
+            {{! DELETE form }}
+            <form id='delete_breach_agent_form'>
+                <input type='hidden' name='delete_breach_id' value='{{this.breach_id}}' />
+                <input type='hidden' name='delete_agent_id' value='{{this.agent_id}}' />
+                <td>
+                    <button type='submit'>
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+{{! CREATE form }}
+<h2>Assign a Cyber Agent to a Breach</h2>
+<form class='cuForm' id='create_breach_agent_form'>
+    <label for='create_agent_id'>CyberAgent: </label>
+    <select name='create_agent_id' id='create_agent_id' required>
+        {{! Select agent drop-down option }}
+        <option value='' disabled selected>Select a CyberAgent</option>
+        {{#each breacheshascyberagents}}
+        <option value='{{this.agent_id}}' required>
+            {{this.agent_id}} - {{this.agent_name}}
+        </option>
+        {{/each}}
+    </select>
+
+    <label for='create_breach_id'>Breach: </label>
+    <select name='create_breach_id' id='create_breach_id' required>
+        {{! Select breach drop-down option }}
+        <option value='' disabled selected>Select a Breach</option>
+        {{#each breacheshascyberagents}}
+        <option value='{{this.breach_id}}' required>
+            {{this.breach_id}} - {{this.date_of_breach}}
+        </option>
+        {{/each}}
+    </select>
+
+
+    <input type='submit' />
+</form>
+
+{{! UPDATE form }}
+<h2>Update a Cyber Agent/Breach Relationship</h2>
+<form class='cuForm' id='update_breach_agent_form'>
+    <label for='update_agent_id'>CyberAgent: </label>
+    <select name='update_agent_id' id='update_agent_id' required>
+        <option value='' disabled selected>Select a CyberAgent</option>
+        {{#each breacheshascyberagents}}
+        <option value='{{this.agent_id}}' required>
+            {{this.agent_id}} - {{this.agent_name}}
+        </option>
+        {{/each}}
+    </select>
+
+    <label for='update_breach_id'>Breach: </label>
+    <select name='update_breach_id' id='update_breach_id' required>
+        <option value='' disabled selected>Select a Breach</option>
+        {{#each breacheshascyberagents}}
+        <option value='{{this.breach_id}}' required>
+            {{this.breach_id}} - {{this.date_of_breach}}
+        </option>
+        {{/each}}
+    </select>
+
+    <input type='submit' />
+</form>

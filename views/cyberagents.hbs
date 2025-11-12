@@ -3,26 +3,26 @@
 {{! READ table }}
 <table>
     <thead>
-        {{! For the table header row, we print the DB attribute names }}
+        {{! Replace Attributes with header names for header row}}
         <tr>
-            {{#each cyberagents.[0]}}
-            <th>
-                {{@key}}
-            </th>
-            {{/each}}
+            <th>ID</th>
+            <th>Name</th>
+            <th>Job Title</th>
+            <th>Were They Hired By Us?</th>
+            <th>Agent's Location</th>
             <th></th>
         </tr>
     </thead>
 
     <tbody>
-        {{! For each row, print the agent_id, name, job title, hired by us and location }}
+        {{! For each row, print the agent_id, name, job title, hired by us and location name}}
         {{#each cyberagents}}
         <tr>
             <td>{{this.agent_id}}</td>
             <td>{{this.name}}</td>
             <td>{{this.job_title}}</td>
             <td>{{this.hired_by_us}}</td>
-            <td>{{this.Locations_location_id}}</td>
+            <td>{{this.location_name}}</td>
 
             {{! DELETE form }}
             <form id='delete_agent_form'>
@@ -52,9 +52,12 @@
 
     <label for='create_agent_location_id'>Location: </label>
     <select name='create_agent_location_id' id='create_agent_location_id' required>
-        <option value='' selected>Select a Location</option>
+        {{! Select location drop-down option }}
+        <option value='' disabled selected>Select a Location</option>
         {{#each locations}}
-        <option value ='{{this.location_id}}'>{{this.name}}</option>
+        <option value='{{this.location_id}}' required>
+            {{this.location_id}} - {{this.location_name}}
+        </option>
         {{/each}}
     </select>
     
@@ -66,6 +69,7 @@
 <form class='cuForm' id='update_agent_form'>
     <label for='update_agent_id'>Agent to Update: </label>
     <select name='update_agent_id' id='update_agent_id' required>
+        {{! Select agent drop-down option }}
         <option value='' disabled selected>Select a Cyber Agent</option>
         {{#each cyberagents}}
         <option value='{{this.agent_id}}'>
@@ -85,9 +89,12 @@
 
     <label for='update_agent_location_id'>Location: </label>
     <select name='update_agent_location_id' id='update_agent_location_id' required>
-        <option value='' selected>Select a Location</option>
+        {{! Select location drop-down option }}
+        <option value='' disabled selected>Select a Location</option>
         {{#each locations}}
-        <option value ='{{this.location_id}}'>{{this.name}}</option>
+        <option value='{{this.location_id}}' required>
+            {{this.location_id}} - {{this.location_name}}
+        </option>
         {{/each}}
     </select>
 

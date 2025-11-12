@@ -3,13 +3,15 @@
 {{! READ table }}
 <table>
     <thead>
-        {{! For the table header row, we print the DB attribute names }}
+        {{! Replace Attributes with header names for header row}}
         <tr>
-            {{#each breaches.[0]}}
-            <th>
-                {{@key}}
-            </th>
-            {{/each}}
+            <th>ID</th>
+            <th>Datetime of Breach</th>
+            <th>Is Breach Ongoing?</th>
+            <th>Hack Type</th>
+            <th>Severity Level</th>
+            <th>Was Breach Successfull?</th>
+            <th>Megacorporation Breached</th>
             <th></th>
         </tr>
     </thead>
@@ -24,7 +26,7 @@
             <td>{{this.hack_type}}</td>
             <td>{{this.severity_level}}</td>
             <td>{{this.success}}</td>
-            <td>{{this.Megacorporations_megacorp_id}}</td>
+            <td>{{this.megacorp_name}}</td>
 
             {{! DELETE form }}
             <form id='delete_breach_form'>
@@ -60,9 +62,12 @@
 
     <label for='create_breach_megacorp_id'>Megacorporation Breached: </label>
     <select name='create_breach_megacorp_id' id='create_breach_megacorp_id' required>
-        <option value='' selected>Select a Megacorporation</option>
+        {{! Select Megacorporation drop-down option }}
+        <option value='' disabled selected>Select a Megacorporation</option>
         {{#each megacorporations}}
-        <option value ='{{this.megacorp_id}}'>{{this.name}}</option>
+        <option value='{{this.megacorp_id}}' required>
+            {{this.megacorp_id}} - {{this.megacorp_name}}
+        </option>
         {{/each}}
     </select>
     
@@ -74,6 +79,7 @@
 <form class='cuForm' id='update_breach_form'>
     <label for='update_breach_id'>Breach to Update: </label>
     <select name='update_breach_id' id='update_breach_id' required>
+        {{! Select breach drop-down option }}
         <option value='' disabled selected>Select a Breach</option>
         {{#each breaches}}
         <option value='{{this.breach_id}}'>
@@ -99,9 +105,12 @@
 
     <label for='update_breach_megacorp_id'>Megacorporation Breached: </label>
     <select name='update_breach_megacorp_id' id='update_breach_megacorp_id' required>
-        <option value='' selected>Select a Megacorporation</option>
+        {{! Select megacorporation drop-down option }}
+        <option value='' disabled selected>Select a Megacorporation</option>
         {{#each megacorporations}}
-        <option value ='{{this.megacorp_id}}'>{{this.name}}</option>
+        <option value='{{this.megacorp_id}}' required>
+            {{this.megacorp_id}} - {{this.megacorp_name}}
+        </option>
         {{/each}}
     </select>
 
