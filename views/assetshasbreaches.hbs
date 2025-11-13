@@ -1,3 +1,9 @@
+# Citation for this file:
+# Date: 11/04/2025
+# Based on:
+# Source URL: https://canvas.oregonstate.edu/courses/2017561/pages/exploration-web-application-technology-2?module_item_id=25645131
+
+
 <h1>Breached Assets</h1>
 
 {{! READ table }}
@@ -44,7 +50,7 @@
     <select name='create_asset_id' id='create_asset_id' required>
         {{! Select asset drop-down option }}
         <option value='' disabled selected>Select an Asset</option>
-        {{#each assetshasbreaches}}
+        {{#each assets}}
         <option value='{{this.asset_id}}' required>
             {{this.asset_id}} - {{this.asset_name}}
         </option>
@@ -55,7 +61,7 @@
     <select name='create_breach_id' id='create_breach_id' required>
         {{! Select breach drop-down option }}
         <option value='' disabled selected>Select a Breach</option>
-        {{#each assetshasbreaches}}
+        {{#each breaches}}
         <option value='{{this.breach_id}}' required>
             {{this.breach_id}} - {{this.date_of_breach}}
         </option>
@@ -72,7 +78,7 @@
     <select name='update_asset_id' id='update_asset_id' required>
         {{! Select asset drop-down option }}
         <option value='' disabled selected>Select an Asset</option>
-        {{#each assetshasbreaches}}
+        {{#each assets}}
         <option value='{{this.asset_id}}' required>
             {{this.asset_id}} - {{this.asset_name}}
         </option>
@@ -83,7 +89,7 @@
     <select name='update_breach_id' id='update_breach_id' required>
         {{! Select breach drop-down option }}
         <option value='' disabled selected>Select a Breach</option>
-        {{#each assetshasbreaches}}
+        {{#each breaches}}
         <option value='{{this.breach_id}}' required>
             {{this.breach_id}} - {{this.date_of_breach}}
         </option>

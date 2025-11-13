@@ -1,3 +1,10 @@
+# Citation for this file:
+# Date: 11/04/2025
+# Based on:
+# Source URL: https://canvas.oregonstate.edu/courses/2017561/pages/exploration-web-application-technology-2?module_item_id=25645131
+
+
+
 <h1>Megacorporation Locations</h1>
 
 {{! READ table }}
@@ -44,7 +51,7 @@
     <select name='create_megacorp_id' id='create_megacorp_id' required>
         {{! Select megacorp drop-down option }}
         <option value='' disabled selected>Select a Megacorporation</option>
-        {{#each megacorporationshaslocations}}
+        {{#each megacorporations}}
         <option value='{{this.megacorp_id}}' required>
             {{this.megacorp_id}} - {{this.megacorporation_name}}
         </option>
@@ -55,7 +62,7 @@
     <select name='create_location_id' id='create_location_id' required>
         {{! Select location drop-down option }}
         <option value='' disabled selected>Select a Location</option>
-        {{#each megacorporationshaslocations}}
+        {{#each locations}}
         <option value='{{this.location_id}}' required>
             {{this.location_id}} - {{this.location_name}}
         </option>
@@ -72,7 +79,7 @@
     <select name='update_megacorp_id' id='update_megacorp_id' required>
         {{! Select megacorporation drop-down option }}
         <option value='' disabled selected>Select a Megacorporation</option>
-        {{#each megacorporationshaslocations}}
+        {{#each megacorporations}}
         <option value='{{this.megacorp_id}}' required>
             {{this.megacorp_id}} - {{this.megacorporation_name}}
         </option>
@@ -83,7 +90,7 @@
     <select name='update_location_id' id='update_location_id' required>
         {{! Select location drop-down option }}
         <option value='' disabled selected>Select a Location</option>
-        {{#each megacorporationshaslocations}}
+        {{#each locations}}
         <option value='{{this.location_id}}' required>
             {{this.location_id}} - {{this.location_name}}
         </option>

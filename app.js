@@ -1,3 +1,11 @@
+// # Citation for this file:
+// # Date: 11/04/2025
+// # Based on:
+// # Source URL: https://canvas.oregonstate.edu/courses/2017561/pages/exploration-web-application-technology-2?module_item_id=25645131
+
+
+
+
 // ########################################
 // ########## SETUP
 
@@ -8,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-const PORT = 29237;
+const PORT = 29238;
 
 // Database
 const db = require('./database/db-connector');
@@ -144,7 +152,7 @@ app.get('/locations', async function (req, res) {
 app.get('/megacorporationshaslocations', async function (req, res) {
     try {
         // join megacorp id, megacorp name, location id and location name together
-        const query = `
+        const tableQuery = `
             SELECT
                 MHL.Megacorporations_megacorp_id AS megacorp_id,
                 M.name AS megacorporation_name,
@@ -154,9 +162,37 @@ app.get('/megacorporationshaslocations', async function (req, res) {
             JOIN Megacorporations M ON M.megacorp_id = MHL.Megacorporations_megacorp_id
             JOIN Locations L ON L.location_id = MHL.Locations_location_id
             ORDER BY MHL.Megacorporations_megacorp_id, MHL.Locations_location_id;`;
-        const [megacorporationshaslocations] = await db.query(query);
-        // Render the megacorporationshaslocations.hbs file, and also send the renderer
-        res.render('megacorporationshaslocations', { megacorporationshaslocations: megacorporationshaslocations });
+        const [megacorporationshaslocations] = await db.query(tableQuery);
+
+        //Unique megacorporations for dropdown menu
+        const megacorpDropdownQuery = `
+            SELECT DISTINCT
+                M.megacorp_id,
+                M.name AS megacorporation_name
+            FROM Megacorporations M
+            JOIN MegacorporationsHasLocations MHL
+                ON M.megacorp_id = MHL.megacorporations_megacorp_id
+            ORDER BY M.name;`; 
+        const [megacorporations] = await db.query(megacorpDropdownQuery);
+
+        //Unique locations for dropdown menu
+        const locationDropDownQuery = `
+            SELECT DISTINCT
+                L.location_id,
+                L.name AS location_name
+            FROM Locations L
+            JOIN MegacorporationsHasLocations MHL
+                ON L.location_id = MHL.Locations_location_id
+            ORDER BY L.name;`;
+        const [locations] = await db.query(locationDropDownQuery);
+
+        //Unique Render the megacorporationshaslocations.hbs file, and also send the renderer
+        res.render('megacorporationshaslocations', { 
+            megacorporationshaslocations,
+            megacorporations,
+            locations  
+        });
+
     } catch (error) {
         console.error('Error executing queries:', error);
         // Send a generic error message to the browser
@@ -180,14 +216,18 @@ app.get('/breacheshascyberagents', async function (req, res) {
             JOIN CyberAgents C ON C.agent_id = BHC.CyberAgents_agent_id
             ORDER BY B.date_of_breach DESC;`;
         const [breacheshascyberagents] = await db.query(query);
+        
+        // dropdown queries
+        const [cyberagents] = await db.query('SELECT agent_id, name AS agent_name FROM CyberAgents ORDER BY agent_id ASC;');
+        const [breaches] = await db.query('SELECT breach_id, date_of_breach FROM Breaches ORDER BY date_of_breach DESC;');
+
         // Render the breacheshascyberagents.hbs file, and also send the renderer
-        res.render('breacheshascyberagents', { breacheshascyberagents: breacheshascyberagents });
+        res.render('breacheshascyberagents', { breacheshascyberagents, cyberagents, breaches });
     } catch (error) {
         console.error('Error executing queries:', error);
         // Send a generic error message to the browser
         res.status(500).send(
-            'An error occurred while executing the database queries.'
-        );
+            'An error occurred while executing the database queries.');
     }
 });
 
@@ -205,8 +245,13 @@ app.get('/assetshasbreaches', async function (req, res) {
             JOIN Breaches B ON B.breach_id = AHB.Breaches_breach_id
             ORDER BY B.date_of_breach DESC;`;
         const [assetshasbreaches] = await db.query(query);
+
+        // dropdown queries
+        const [assets] = await db.query('SELECT asset_id, name AS asset_name FROM Assets ORDER BY asset_id ASC;');
+        const [breaches] = await db.query('SELECT breach_id, date_of_breach FROM Breaches ORDER BY date_of_breach DESC');
+
         // Render the assetshasbreaches.hbs file, and also send the renderer
-        res.render('assetshasbreaches', { assetshasbreaches: assetshasbreaches });
+        res.render('assetshasbreaches', { assetshasbreaches,assets, breaches });
     } catch (error) {
         console.error('Error executing queries:', error);
         // Send a generic error message to the browser
