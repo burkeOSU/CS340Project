@@ -261,6 +261,93 @@ app.get('/assetshasbreaches', async function (req, res) {
     }
 });
 
+// CREATE ROUTES
+app.post('/megacorporations/create', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+
+        // Create and execute our queries
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_CreateMegacorporation(?, ?, @new_id);`;
+
+        // Store ID of last inserted row
+        const [[[rows]]] = await db.query(query, [
+            data.create_megacorp_name,
+            data.create_megacorp_industry
+        ]);
+
+        console.log(`CREATE Megacorporation. ID: ${rows.new_id} ` +
+            `Name: ${data.create_megacorp_name}`
+        );
+
+        // Redirect the user to the updated webpage
+        res.redirect('/megacorporations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+// UPDATE ROUTES
+app.post('/megacorporations/update', async function (req, res) {
+    try {
+        // Parse frontend form information
+        const data = req.body;
+
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = 'CALL sp_UpdateMegacorporation(?, ?, ?);';
+        await db.query(query, [
+            data.update_megacorp_id,
+            data.update_megacorp_name,
+            data.update_megacorp_industry,
+        ]);
+
+        console.log(`UPDATE Megacorporation. ID: ${data.update_megacorp_id} ` +
+            `Name: ${data.update_megacorp_name}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/megacorporations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+// DELETE ROUTES
+app.post('/megacorporations/delete', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_DeleteMegacorporation(?);`;
+        await db.query(query, [data.delete_megacorp_id]);
+
+        console.log(`DELETE Megacorporation. ID: ${data.delete_megacorp_id} ` +
+            `Name: ${data.delete_megacorp_name}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/megacorporations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
 // ########################################
 // ########## LISTENER
 
