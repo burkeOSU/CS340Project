@@ -1,3 +1,5 @@
+Note: Before running the project, DDL.sql and plsql.sql will need to be sourced on MariaDB.
+
 All files were based off OSU's Web App UI template.
 
 “Exploration - Implementing CUD operations in your app.” Oregon State University, https://canvas.oregonstate.edu/courses/2017561/pages/exploration-implementing-cud-operations-in-your-app?module_item_id=25645149. Accessed 17 Nov 2025.
