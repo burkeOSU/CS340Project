@@ -74,3 +74,11 @@
 
     <input type='submit' />
 </form>
+
+{{! RESET Database form }}
+<h2>Reset Database</h2>
+<form id='reset_db_form' method='POST' action='/reset'>
+    <button type='submit' onclick='return confirm("Warning: Resetting the database will undo all changes.");'>
+        Reset Database
+    </button>
+</form>

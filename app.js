@@ -348,6 +348,27 @@ app.post('/megacorporations/delete', async function (req, res) {
     }
 });
 
+// RESET ROUTE
+app.post('/reset', async function (req, res) {
+    try {
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_ResetDatabase();`;
+        await db.query(query);
+
+        console.log(`Database reset`);
+
+        // Redirect the user to the updated webpage data (only Megacorp has CUD operations currently)
+        res.redirect('/megacorporations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
 // ########################################
 // ########## LISTENER
 
