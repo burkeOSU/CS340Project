@@ -36,7 +36,7 @@ DELIMITER ;
 -- #############################
 -- DELETE Megacorporation
 -- #############################
-DROP PROCEDURE IF EXISTS sp_DeletMegacorporation;
+DROP PROCEDURE IF EXISTS sp_DeleteMegacorporation;
 
 DELIMITER //
 CREATE PROCEDURE sp_DeleteMegacorporation(IN m_id INT)
