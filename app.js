@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-const PORT = 29238;
+const PORT = 29237;
 
 // Database
 const db = require('./database/db-connector');
@@ -292,6 +292,36 @@ app.post('/megacorporations/create', async function (req, res) {
     }
 });
 
+app.post('/megacorporationshaslocations/create', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+
+        // Create and execute our queries
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_CreateMegacorporationsHasLocations(?, ?);`;
+
+        // Store ID of last inserted row
+        await db.query(query, [
+            data.create_megacorp_id,
+            data.create_location_id
+        ]);
+
+        console.log(`CREATE Megacorporation:Location relationship. Megacorporation ID: ${data.create_megacorp_id} ` +
+            `Location ID: ${data.create_location_id}`
+        );
+
+        // Redirect the user to the updated webpage
+        res.redirect('/megacorporationshaslocations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
 // UPDATE ROUTES
 app.post('/megacorporations/update', async function (req, res) {
     try {
@@ -313,6 +343,37 @@ app.post('/megacorporations/update', async function (req, res) {
 
         // Redirect the user to the updated webpage data
         res.redirect('/megacorporations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+app.post('/megacorporationshaslocations/update', async function (req, res) {
+    try {
+        // Parse frontend form information
+        const data = req.body;
+
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = 'CALL sp_UpdateMegacorporationsHasLocations(?, ?, ?, ?);';
+
+        await db.query(query, [
+            data.update_megacorp_id,
+            data.update_location_id,
+            data.update_new_megacorp_id,
+            data.update_new_location_id
+        ]);
+
+        console.log(`UPDATE Megacorporation:Location relationship. Megacorporation ID: ${data.update_new_megacorp_id} ` +
+            `Location ID: ${data.update_new_location_id}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/megacorporationshaslocations');
     } catch (error) {
         console.error('Error executing queries:', error);
         // Send a generic error message to the browser
@@ -348,6 +409,31 @@ app.post('/megacorporations/delete', async function (req, res) {
     }
 });
 
+app.post('/megacorporationshaslocations/delete', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_DeleteMegacorporationsHasLocations(?, ?);`;
+        await db.query(query, [data.delete_megacorp_id, data.delete_location_id]);
+
+        console.log(`DELETE Megacorporation:Location relationship. Megacorporation ID: ${data.delete_megacorp_id}, ` +
+            `Location ID: ${data.delete_location_id}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/megacorporationshaslocations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
 // RESET ROUTE
 app.post('/reset', async function (req, res) {
     try {
@@ -359,7 +445,7 @@ app.post('/reset', async function (req, res) {
         console.log(`Database reset`);
 
         // Redirect the user to the updated webpage data (only Megacorp has CUD operations currently)
-        res.redirect('/megacorporations');
+        res.redirect('/');
     } catch (error) {
         console.error('Error executing queries:', error);
         // Send a generic error message to the browser
