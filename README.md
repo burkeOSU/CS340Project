@@ -13,3 +13,5 @@ All files were based off OSU's Web App UI template.
 “The Difference between SELECT * and SELECT A.* [Closed].” Stack Overflow, 24 Mar. 2017, stackoverflow.com/questions/43009227/the-difference-between-select-and-select-a. Accessed 11 Nov 2025.
 
 W3Schools. “SQL Aliases.” W3Schools, www.w3schools.com/sql/sql_alias.asp. Accessed 11 Nov 2025.
+
+“How do I console.log() SQL error handling?” prompt. ChatGPT, 28 Nov 2025, https://chatgpt.com/
