@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-const PORT = 29237;
+const PORT = 29239;
 
 // Database
 const db = require('./database/db-connector');
@@ -149,6 +149,60 @@ app.get('/locations', async function (req, res) {
     }
 });
 
+// app.get('/megacorporationshaslocations', async function (req, res) {
+//     try {
+//         // join megacorp id, megacorp name, location id and location name together
+//         const tableQuery = `
+//             SELECT
+//                 MHL.Megacorporations_megacorp_id AS megacorp_id,
+//                 M.name AS megacorporation_name,
+//                 MHL.Locations_location_id AS location_id,
+//                 L.name AS location_name
+//             FROM MegacorporationsHasLocations MHL
+//             JOIN Megacorporations M ON M.megacorp_id = MHL.Megacorporations_megacorp_id
+//             JOIN Locations L ON L.location_id = MHL.Locations_location_id
+//             ORDER BY MHL.Megacorporations_megacorp_id, MHL.Locations_location_id;`;
+//         const [megacorporationshaslocations] = await db.query(tableQuery);
+
+//         //Unique megacorporations for dropdown menu
+        
+//         const megacorpDropdownQuery = `
+//             SELECT DISTINCT
+//                 M.megacorp_id,
+//                 M.name AS megacorporation_name
+//             FROM Megacorporations M
+//             JOIN MegacorporationsHasLocations MHL
+//                 ON M.megacorp_id = MHL.megacorporations_megacorp_id
+//             ORDER BY M.name;`; 
+//         const [megacorporations] = await db.query(megacorpDropdownQuery);
+        
+
+//         //Unique locations for dropdown menu
+//         const locationDropDownQuery = `
+//             SELECT DISTINCT
+//                 L.location_id,
+//                 L.name AS location_name
+//             FROM Locations L
+//             JOIN MegacorporationsHasLocations MHL
+//                 ON L.location_id = MHL.Locations_location_id
+//             ORDER BY L.name;`;
+//         const [locations] = await db.query(locationDropDownQuery);
+
+//         //Unique Render the megacorporationshaslocations.hbs file, and also send the renderer
+//         res.render('megacorporationshaslocations', { 
+//             megacorporationshaslocations,
+//             megacorporations,
+//             locations  
+//         });
+
+//     } catch (error) {
+//         console.error('Error executing queries:', error);
+//         // Send a generic error message to the browser
+//         res.status(500).send(
+//             'An error occurred while executing the database queries.'
+//         );
+//     }
+// });
 app.get('/megacorporationshaslocations', async function (req, res) {
     try {
         // join megacorp id, megacorp name, location id and location name together
@@ -161,18 +215,19 @@ app.get('/megacorporationshaslocations', async function (req, res) {
             FROM MegacorporationsHasLocations MHL
             JOIN Megacorporations M ON M.megacorp_id = MHL.Megacorporations_megacorp_id
             JOIN Locations L ON L.location_id = MHL.Locations_location_id
-            ORDER BY MHL.Megacorporations_megacorp_id, MHL.Locations_location_id;`;
+            ORDER BY megacorp_id, location_id;
+            `;
+
         const [megacorporationshaslocations] = await db.query(tableQuery);
 
         //Unique megacorporations for dropdown menu
         const megacorpDropdownQuery = `
-            SELECT DISTINCT
+            SELECT
                 M.megacorp_id,
                 M.name AS megacorporation_name
             FROM Megacorporations M
-            JOIN MegacorporationsHasLocations MHL
-                ON M.megacorp_id = MHL.megacorporations_megacorp_id
-            ORDER BY M.name;`; 
+            ORDER BY M.name;
+            `; 
         const [megacorporations] = await db.query(megacorpDropdownQuery);
 
         //Unique locations for dropdown menu
@@ -181,9 +236,8 @@ app.get('/megacorporationshaslocations', async function (req, res) {
                 L.location_id,
                 L.name AS location_name
             FROM Locations L
-            JOIN MegacorporationsHasLocations MHL
-                ON L.location_id = MHL.Locations_location_id
             ORDER BY L.name;`;
+
         const [locations] = await db.query(locationDropDownQuery);
 
         //Unique Render the megacorporationshaslocations.hbs file, and also send the renderer
@@ -201,6 +255,7 @@ app.get('/megacorporationshaslocations', async function (req, res) {
         );
     }
 });
+
 
 app.get('/breacheshascyberagents', async function (req, res) {
     try {
@@ -296,7 +351,8 @@ app.post('/megacorporationshaslocations/create', async function (req, res) {
     try {
         // Parse frontend form information
         let data = req.body;
-
+        
+        console.log(data)
         // Create and execute our queries
         // Using parameterized queries (Prevents SQL injection attacks)
         const query = `CALL sp_CreateMegacorporationsHasLocations(?, ?);`;
@@ -314,11 +370,27 @@ app.post('/megacorporationshaslocations/create', async function (req, res) {
         // Redirect the user to the updated webpage
         res.redirect('/megacorporationshaslocations');
     } catch (error) {
-        console.error('Error executing queries:', error);
-        // Send a generic error message to the browser
-        res.status(500).send(
-            'An error occurred while executing the database queries.'
-        );
+        //Citation for update_megacorp_location_form
+        //AI Tool used: https://chatgpt.com
+        //Prompt: "How do I console.log() SQL error handling?"
+        //
+        //
+        console.log("SQL ERROR:", error);
+        if (error.sqlState === '45000' || error.code === 'ER_DUP_ENTRY') {
+            res.send(`<script>
+                if(confirm("${error.message} Click OK to ignore the duplicate.")) {
+                    window.location.href = "/megacorporationshaslocations";
+                } else {
+                    window.history.back();
+                }
+            </script>`);
+        } else {
+            console.error('Error executing queries:', error);
+            // Send a generic error message to the browser
+            res.status(500).send(
+                'An error occurred while executing the database queries. TEST'
+            );
+        }
     }
 });
 
@@ -378,7 +450,7 @@ app.post('/megacorporationshaslocations/update', async function (req, res) {
         console.error('Error executing queries:', error);
         // Send a generic error message to the browser
         res.status(500).send(
-            'An error occurred while executing the database queries.'
+            'An error occurred while executing the database queries'
         );
     }
 });
