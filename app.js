@@ -293,6 +293,41 @@ app.post('/megacorporations/create', async function (req, res) {
     }
 });
 
+
+app.post('/breaches/create', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+
+        // Create and execute our queries
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_CreateBreach(?, ?, ?, ?, ?, ?, @new_id);`;
+
+        // Store ID of last inserted row
+        const [[[rows]]] = await db.query(query, [
+            data.create_breach_date_of_breach,
+            data.create_breach_ongoing ? 1 : 0,
+            data.create_breach_hack_type,
+            data.create_breach_severity_level,
+            data.create_breach_success ? 1 : 0,
+            data.create_breach_megacorp_id
+        ]);
+
+        console.log(`CREATE Breach. ID: ${rows.new_id} ` +
+            `Name: ${data.create_date_of_breach}`
+        );
+
+        // Redirect the user to the updated webpage
+        res.redirect('/breaches');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
 app.post('/megacorporationshaslocations/create', async function (req, res) {
     try {
         // Parse frontend form information
@@ -340,6 +375,8 @@ app.post('/megacorporationshaslocations/create', async function (req, res) {
     }
 });
 
+
+
 // UPDATE ROUTES
 app.post('/megacorporations/update', async function (req, res) {
     try {
@@ -361,6 +398,40 @@ app.post('/megacorporations/update', async function (req, res) {
 
         // Redirect the user to the updated webpage data
         res.redirect('/megacorporations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+
+app.post('/breaches/update', async function (req, res) {
+    try {
+        // Parse frontend form information
+        const data = req.body;
+
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = 'CALL sp_UpdateBreach(?, ?, ?, ?, ?, ?, ?);';
+        await db.query(query, [
+            data.update_breach_id,
+            data.update_breach_date_of_breach,
+            data.update_breach_ongoing ? 1 : 0,
+            data.update_breach_hack_type,
+            data.update_breach_severity_level,
+            data.update_breach_success ? 1 : 0,
+            data.update_breach_megacorp_id
+        ]);
+
+        console.log(`UPDATE Breach. ID: ${data.update_breach_date_of_breach} ` +
+            `DATETIME: ${data.update_breach_date_of_breach}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/breaches');
     } catch (error) {
         console.error('Error executing queries:', error);
         // Send a generic error message to the browser
@@ -401,6 +472,10 @@ app.post('/megacorporationshaslocations/update', async function (req, res) {
     }
 });
 
+
+
+
+
 // DELETE ROUTES
 app.post('/megacorporations/delete', async function (req, res) {
     try {
@@ -426,6 +501,46 @@ app.post('/megacorporations/delete', async function (req, res) {
         );
     }
 });
+
+
+
+
+
+app.post('/breaches/delete', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_DeleteBreach(?);`;
+        await db.query(query, [data.delete_breach_id]);
+
+        console.log(`DELETE Breach. ID: ${data.delete_breach_id} ` +
+            `Name: ${data.delete_breach_name}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/breaches');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
 
 app.post('/megacorporationshaslocations/delete', async function (req, res) {
     try {
@@ -482,5 +597,4 @@ app.listen(PORT, function () {
             PORT +
             '; press Ctrl-C to terminate.'
     );
-
 });

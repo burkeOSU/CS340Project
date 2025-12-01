@@ -76,6 +76,168 @@ BEGIN
 END //
 DELIMITER ;
 
+
+
+
+
+
+
+
+
+-- #############################
+-- BREACHES
+-- #############################
+
+-- #############################
+-- CREATE Breach
+-- #############################
+DROP PROCEDURE IF EXISTS sp_CreateBreach;
+
+DELIMITER //
+CREATE PROCEDURE sp_CreateBreach(
+    IN b_date_of_breach DATETIME,
+    IN b_ongoing TINYINT(4),
+    IN b_hack_type VARCHAR(60),
+    IN b_severity_level VARCHAR(60),
+    IN b_success TINYINT(4),
+    IN b_mcorp_target INT(11),
+    OUT b_id INT)
+BEGIN
+    INSERT INTO Breaches (date_of_breach, ongoing, hack_type, severity_level, success, Megacorporations_megacorp_id) 
+    VALUES (b_date_of_breach, b_ongoing, b_hack_type, b_severity_level, b_success, b_mcorp_target);
+
+    -- Store the ID of the last inserted row
+    SELECT LAST_INSERT_ID() into b_id;
+    -- Display the ID of the last inserted megacorp.
+    SELECT LAST_INSERT_ID() AS 'new_id';
+
+END //
+DELIMITER ;
+
+-- #############################
+-- UPDATE Breach
+-- #############################
+DROP PROCEDURE IF EXISTS sp_UpdateBreach;
+
+DELIMITER //
+CREATE PROCEDURE sp_UpdateBreach(   IN b_id INT, 
+                                    IN b_date_of_breach DATETIME, 
+                                    IN b_ongoing TINYINT(4),
+                                    IN b_hack_type VARCHAR(60),
+                                    IN b_severity_level VARCHAR(60),
+                                    IN b_success TINYINT(4),
+                                    IN b_mcorp_target INT(11)
+)
+
+BEGIN
+    UPDATE Breaches SET date_of_breach = b_date_of_breach,
+                        ongoing = b_ongoing,
+                        hack_type = b_hack_type,
+                        severity_level = b_severity_level,
+                        success = b_success,
+                        Megacorporations_megacorp_id = b_mcorp_target
+
+                        WHERE breach_id = b_id; 
+END //
+DELIMITER ;
+
+
+
+-- #############################
+-- DELETE Breach
+-- #############################
+DROP PROCEDURE IF EXISTS sp_DeleteBreach;
+
+DELIMITER //
+CREATE PROCEDURE sp_DeleteBreach(IN b_id INT)
+BEGIN
+    DECLARE error_message VARCHAR(255); 
+
+    -- error handling
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Roll back the transaction on any error
+        ROLLBACK;
+        -- Propogate the custom error message to the caller
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+        -- Deleting corresponding rows from Breaches table and 
+        --      intersection tables:    BreachesHasCyberagents,
+        --                              assetshasbreaches 
+        --      to prevent a data anamoly
+        -- This can also be accomplished by using an 'ON DELETE CASCADE' constraint
+        DELETE FROM BreachesHasCyberAgents WHERE Breaches_breach_id = b_id;
+        DELETE FROM AssetsHasBreaches WHERE Breaches_breach_id = b_id;
+        DELETE FROM Breaches WHERE breach_id = b_id;
+
+        -- ROW_COUNT() returns the number of rows affected by the preceding statement.
+        IF ROW_COUNT() = 0 THEN
+            set error_message = CONCAT('No matching record found in Breaches for id: ', b_id);
+            -- Trigger custom error, invoke EXIT HANDLER
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = error_message;
+        END IF;
+
+    COMMIT;
+
+END //
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- #############################
 -- MEGACORPORATIONS HAS LOCATIONS
 -- #############################
@@ -107,6 +269,17 @@ BEGIN
     END;
 
     START TRANSACTION;
+
+        IF EXISTS(
+            SELECT 1
+            FROM    MegacorporationsHasLocations
+            WHERE   Megacorporations_megacorp_id = m_megacorp_id
+                AND Locations_location_id = l_location_id    
+        )   THEN
+            SET error_message = CONCAT('This megacorporation/location relationship already exists.');
+            -- Trigger custom error, invoke EXIT HANDLER
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = error_message;
+        END IF;
 
         INSERT INTO MegacorporationsHasLocations (Megacorporations_megacorp_id, Locations_location_id) 
         VALUES (m_megacorp_id, l_location_id);
@@ -171,7 +344,7 @@ BEGIN
 
         -- ROW_COUNT() returns the number of rows affected by the preceding statement.
         IF ROW_COUNT() = 0 THEN
-            set error_message = CONCAT('No matching record found in MegacorporationsHasLocarions for Megacorporation ID: ', m_megacorp_id, ' and Location ID: ', l_location_id);
+            set error_message = CONCAT('No matching record found in MegacorporationsHasLocations for Megacorporation ID: ', m_megacorp_id, ' and Location ID: ', l_location_id);
             -- Trigger custom error, invoke EXIT HANDLER
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = error_message;
         END IF;
@@ -180,3 +353,34 @@ BEGIN
 
 END //
 DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
