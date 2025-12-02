@@ -517,7 +517,7 @@ app.post('/breaches/delete', async function (req, res) {
         await db.query(query, [data.delete_breach_id]);
 
         console.log(`DELETE Breach. ID: ${data.delete_breach_id} ` +
-            `Name: ${data.delete_breach_name}`
+            `Name: ${data.delete_date_of_breach}`
         );
 
         // Redirect the user to the updated webpage data
@@ -531,7 +531,30 @@ app.post('/breaches/delete', async function (req, res) {
     }
 });
 
+app.post('/cyberagents/delete', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
 
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_DeleteCyberAgent(?);`;
+        await db.query(query, [data.delete_agent_id]);
+        console.log(data)
+        console.log(`DELETE CyberAgent. ID: ${data.delete_agent_id} ` +
+            `Name: ${data.delete_agent_name}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/cyberagents');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
 
 
 

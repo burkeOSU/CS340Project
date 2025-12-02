@@ -188,7 +188,45 @@ DELIMITER ;
 
 
 
+-- #############################
+-- DELETE Cyberagents
+-- #############################
 
+DROP PROCEDURE IF EXISTS sp_DeleteCyberAgent;
+
+DELIMITER //
+CREATE PROCEDURE sp_DeleteCyberAgent(IN c_id INT)
+BEGIN
+    DECLARE error_message VARCHAR(255);
+
+ -- error handling
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+                
+        -- Roll back the transaction on any error
+        ROLLBACK;
+        -- Propogate the custom error message to the caller
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+        -- Deleting corresponding rows from the BreachesHasCyberAgents
+        DELETE FROM BreachesHasCyberAgents WHERE CyberAgents_agent_id = c_id;
+        -- Delete CyberAgent from main table
+        DELETE FROM CyberAgents WHERE agent_id = c_id;
+
+        -- ROW_COUNT() returns the number of rows affected by the last DELETE
+        IF ROW_COUNT() = 0 THEN
+            SET error_message = CONCAT('No matching record found in CyberAgents for id: ', c_id);
+            -- Trigger custom error, invoke EXIT HANDLER
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = error_message;
+        END IF;
+
+    COMMIT;
+
+END //
+DELIMITER ;
 
 
 

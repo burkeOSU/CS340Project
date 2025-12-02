@@ -38,6 +38,7 @@
             {{! DELETE form }}
             <form id='delete_breach_form' method='POST' action='/breaches/delete'>
                 <input type='hidden' name='delete_breach_id' value='{{this.breach_id}}' />
+                <input type='hidden' name='delete_date_of_breach' value='{{this.date_of_breach}}' />
                 <td>
                     <button type='submit'>
                         Delete

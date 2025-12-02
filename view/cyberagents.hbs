@@ -1,0 +1,109 @@
+{{!-- # Citation for this file:
+# Date: 11/04/2025
+# Based on:
+# Source URL: https://canvas.oregonstate.edu/courses/2017561/pages/exploration-web-application-technology-2?module_item_id=25645131 --}}
+
+
+<h1>Cyber Agents</h1>
+
+{{! READ table }}
+<table>
+    <thead>
+        {{! Replace Attributes with header names for header row}}
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Job Title</th>
+            <th>Were They Hired By Us?</th>
+            <th>Agent's Location</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{! For each row, print the agent_id, name, job title, hired by us and location name}}
+        {{#each cyberagents}}
+        <tr>
+            <td>{{this.agent_id}}</td>
+            <td>{{this.name}}</td>
+            <td>{{this.job_title}}</td>
+            <td>{{this.hired_by_us}}</td>
+            <td>{{this.location_name}}</td>
+
+            {{! DELETE form }}
+            <form id='delete_agent_form' method='POST' action='/cyberagents/delete'>
+                <input type='hidden' name='delete_agent_id' value='{{this.agent_id}}' />
+                <input type="hidden" name="delete_agent_name" value="{{this.name}}" />
+                <td>
+                    <button type='submit'>
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+{{! CREATE form }}
+<h2>Create a Cyber Agent</h2>
+<form class='cuForm' id='create_agent_form'>
+    <label for='create_agent_name'>Name: </label>
+    <input type='text' name='create_agent_name' id='create_agent_name' required />
+
+    <label for='create_agent_job_title'>Job Title: </label>
+    <input type='text' name='create_agent_job_title' id='create_agent_job_title' required />
+
+    <label for='create_agent_hired_by_us'>Hired by Us: </label>
+    <input type='checkbox' name='create_agent_hired_by_us' id='create_agent_hired_by_us' />
+
+    <label for='create_agent_location_id'>Location: </label>
+    <select name='create_agent_location_id' id='create_agent_location_id' required>
+        {{! Select location drop-down option }}
+        <option value='' disabled selected>Select a Location</option>
+        {{#each locations}}
+        <option value='{{this.location_id}}' required>
+            {{this.location_id}} - {{this.location_name}}
+        </option>
+        {{/each}}
+    </select>
+    
+    <input type='submit' />
+</form>
+
+{{! UPDATE form }}
+<h2>Update an Agent</h2>
+<form class='cuForm' id='update_agent_form'>
+    <label for='update_agent_id'>Agent to Update: </label>
+    <select name='update_agent_id' id='update_agent_id' required>
+        {{! Select agent drop-down option }}
+        <option value='' disabled selected>Select a Cyber Agent</option>
+        {{#each cyberagents}}
+        <option value='{{this.agent_id}}'>
+            {{this.agent_id}} - {{this.name}}
+        </option>
+        {{/each}}
+    </select>
+
+    <label for='update_agent_name'>Name: </label>
+    <input type='text' name='update_agent_name' id='update_agent_name' required />
+
+    <label for='update_agent_job_title'>Job Title: </label>
+    <input type='text' name='update_agent_job_title' id='update_agent_job_title' required />
+
+    <label for='update_agent_hired_by_us'>Hired by Us: </label>
+    <input type='checkbox' name='update_agent_hired_by_us' id='update_agent_hired_by_us' />
+
+    <label for='update_agent_location_id'>Location: </label>
+    <select name='update_agent_location_id' id='update_agent_location_id' required>
+        {{! Select location drop-down option }}
+        <option value='' disabled selected>Select a Location</option>
+        {{#each locations}}
+        <option value='{{this.location_id}}' required>
+            {{this.location_id}} - {{this.location_name}}
+        </option>
+        {{/each}}
+    </select>
+
+    <input type='submit' />
+</form>
