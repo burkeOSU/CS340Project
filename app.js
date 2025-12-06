@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-const PORT = 29239;
+const PORT = 29238;
 
 // Database
 const db = require('./database/db-connector');
@@ -1054,4 +1054,5 @@ app.listen(PORT, function () {
             PORT +
             '; press Ctrl-C to terminate.'
     );
+
 });
