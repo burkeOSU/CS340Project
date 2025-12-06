@@ -29,7 +29,7 @@
             <td>{{this.date_of_breach}}</td>
 
             {{! DELETE form }}
-            <form id='delete_asset_breach_form'>
+            <form id='delete_asset_breach_form' method='POST' action='/assetshasbreaches/delete'>
                 <input type='hidden' name='delete_asset_id' value='{{this.asset_id}}' />
                 <input type='hidden' name='delete_breach_id' value='{{this.breach_id}}' />
                 <td>
@@ -45,7 +45,7 @@
 
 {{! CREATE form }}
 <h2>Assign an Asset to a Breach</h2>
-<form class='cuForm' id='create_asset_breach_form'>
+<form class='cuForm' id='create_asset_breach_form' method='POST' action='/assetshasbreaches/create'>
     <label for='create_asset_id'>Asset: </label>
     <select name='create_asset_id' id='create_asset_id' required>
         {{! Select asset drop-down option }}
@@ -73,7 +73,7 @@
 
 {{! UPDATE form }}
 <h2>Update an Asset/Breach Relationship</h2>
-<form class='cuForm' id='update_asset_breach_form'>
+<form class='cuForm' id='update_asset_breach_form' method='POST' action='/assetshasbreaches/update'>
     <label for='update_asset_id'>Asset: </label>
     <select name='update_asset_id' id='update_asset_id' required>
         {{! Select asset drop-down option }}
@@ -87,6 +87,28 @@
 
     <label for='update_breach_id'>Breach: </label>
     <select name='update_breach_id' id='update_breach_id' required>
+        {{! Select breach drop-down option }}
+        <option value='' disabled selected>Select a Breach</option>
+        {{#each breaches}}
+        <option value='{{this.breach_id}}' required>
+            {{this.breach_id}} - {{this.date_of_breach}}
+        </option>
+        {{/each}}
+    </select>
+
+    <label for='update_new_asset_id'>New Asset: </label>
+    <select name='update_new_asset_id' id='update_new_asset_id' required>
+        {{! Select asset drop-down option }}
+        <option value='' disabled selected>Select an Asset</option>
+        {{#each assets}}
+        <option value='{{this.asset_id}}' required>
+            {{this.asset_id}} - {{this.asset_name}}
+        </option>
+        {{/each}}
+    </select>
+
+    <label for='update_new_breach_id'>New Breach: </label>
+    <select name='update_new_breach_id' id='update_new_breach_id' required>
         {{! Select breach drop-down option }}
         <option value='' disabled selected>Select a Breach</option>
         {{#each breaches}}

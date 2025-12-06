@@ -188,17 +188,56 @@ DELIMITER ;
 
 
 
+-- #############################
+-- CYBERAGENTS
+-- #############################
+
+-- #############################
+-- CREATE Cyberagents
+-- #############################
+DROP PROCEDURE IF EXISTS sp_CreateCyberAgent;
+
+DELIMITER //
+CREATE PROCEDURE sp_CreateCyberAgent(
+    IN c_name VARCHAR(60),
+    IN c_job_title VARCHAR(60),
+    IN c_hired_by_us TINYINT(4),
+    IN c_location_fk INT(11),
+
+    OUT c_id INT
+)
+BEGIN
+    INSERT INTO CyberAgents (name, job_title, hired_by_us, Locations_location_id)
+    VALUES (c_name, c_job_title, c_hired_by_us, c_location_fk);
+    
+    -- Store the ID of the last inserted row
+    SELECT LAST_INSERT_ID() INTO c_id;
+    SELECT LAST_INSERT_ID() AS 'new_id';
+END //
+DELIMITER ;
 
 
+-- #############################
+-- UPDATE Cyberagents
+-- #############################
+DROP PROCEDURE IF EXISTS sp_UpdateCyberAgent;
 
-
-
-
-
-
-
-
-
+DELIMITER //
+CREATE PROCEDURE sp_UpdateCyberAgent(
+    IN c_id INT(11),
+    IN c_name VARCHAR(60),
+    IN c_job_title VARCHAR(60),
+    IN c_hired_by_us TINYINT(4),
+    IN c_location_fk INT(11)
+)
+BEGIN
+    UPDATE CyberAgents SET  name = c_name,
+                            job_title = c_job_title,
+                            hired_by_us = c_hired_by_us,
+                            Locations_location_id = c_location_fk
+                            WHERE agent_id = c_id;
+END //
+DELIMITER ;
 
 
 
@@ -438,15 +477,6 @@ DELIMITER ;
 
 
 
-
-
-
-
-
-
-
-
-
 -- #############################
 -- MEGACORPORATIONS HAS LOCATIONS
 -- #############################
@@ -562,6 +592,228 @@ BEGIN
 
 END //
 DELIMITER ;
+
+
+
+-- #############################
+-- BREACHESHASCYBERAGENTS
+-- #############################
+
+-- #############################
+-- CREATE BreachesHasCyberAgents
+-- #############################
+DROP PROCEDURE IF EXISTS sp_CreateBreachesHasCyberAgents;
+
+DELIMITER //
+CREATE PROCEDURE sp_CreateBreachesHasCyberAgents(
+    IN b_breach_id INT,
+    IN b_agent_id INT
+)
+BEGIN
+    DECLARE error_message VARCHAR(255);
+
+    -- error handling
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Roll back the transaction on any error
+        ROLLBACK;
+        -- Propogate the custom error message to the caller
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+        -- Check for duplicate relationship
+        IF EXISTS (
+            SELECT 1 FROM BreachesHasCyberAgents
+            WHERE Breaches_breach_id = b_breach_id
+                AND CyberAgents_agent_id = b_agent_id
+        ) THEN
+            SET error_message = 'This breach/cyberagent relationship already exists.';
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = error_message;
+        END IF;
+
+        -- Inserts a new record of a relationship
+        INSERT INTO BreachesHasCyberAgents (Breaches_breach_id, CyberAgents_agent_id)
+        VALUES (b_breach_id, b_agent_id);
+
+    COMMIT;
+END //
+DELIMITER ;
+
+
+-- #############################
+-- UPDATE BreachesHasCyberAgents
+-- #############################
+DROP PROCEDURE IF EXISTS sp_UpdateBreachesHasCyberAgents;
+
+DELIMITER // 
+CREATE PROCEDURE sp_UpdateBreachesHasCyberAgents(
+    IN old_breach_id INT,
+    IN old_agent_id INT,
+    IN new_breach_id INT,
+    IN new_agent_id INT
+    )
+BEGIN
+    UPDATE BreachesHasCyberAgents
+    SET Breaches_breach_id = new_breach_id,
+        CyberAgents_agent_id = new_agent_id
+    WHERE Breaches_breach_id = old_breach_id
+        AND CyberAgents_agent_id = old_agent_id;
+END //
+DELIMITER ;
+
+-- #############################
+-- DELETE BreachesHasCyberAgents
+-- #############################
+DROP PROCEDURE IF EXISTS sp_DeleteBreachesHasCyberAgents;
+
+DELIMITER // 
+CREATE PROCEDURE sp_DeleteBreachesHasCyberAgents(
+    IN b_breach_id INT,
+    IN c_agent_id INT
+)
+BEGIN
+    DECLARE error_message VARCHAR(255);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+        DELETE FROM BreachesHasCyberAgents
+        WHERE Breaches_breach_id = b_breach_id
+            AND CyberAgents_agent_id = c_agent_id;
+
+        IF ROW_COUNT() = 0 THEN
+            SET error_message = CONCAT(
+                'No matching record in BreachesHasCyberAgents for Breach ID: ',
+                b_breach_id, ' and Agent ID: ', c_agent_id
+            );
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = error_message;
+        END IF;
+
+    COMMIT;
+
+END //
+DELIMITER ;
+
+
+-- #############################
+-- AssetsHasBreaches
+-- #############################
+-- #############################
+-- CREATE AssetsHasBreaches
+-- #############################
+DROP PROCEDURE IF EXISTS sp_CreateAssetsHasBreaches;
+
+DELIMITER //
+CREATE PROCEDURE sp_CreateAssetsHasBreaches(
+    IN a_asset_id INT,
+    IN b_breach_id INT
+)
+BEGIN 
+    DECLARE error_message VARCHAR(255);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+        IF EXISTS (
+            SELECT 1 FROM AssetsHasBreaches
+            WHERE Assets_asset_id = a_asset_id
+                AND Breaches_breach_id = b_breach_id
+        ) THEN
+            SET error_message = 'This asset/breach relationship already exists.';
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = error_message;
+        END IF;
+
+        INSERT INTO AssetsHasBreaches (Assets_asset_id, Breaches_breach_id)
+        VALUES (a_asset_id, b_breach_id);
+
+    COMMIT;
+END //
+DELIMITER ;
+
+-- #############################
+-- UPDATE AssetsHasBreaches
+-- #############################
+
+DROP PROCEDURE IF EXISTS sp_UpdateAssetsHasBreaches;
+
+DELIMITER //
+CREATE PROCEDURE sp_UpdateAssetsHasBreaches(
+    IN old_asset_id INT,
+    IN old_breach_id INT,
+    IN new_asset_id INT,
+    IN new_breach_id INT
+)
+BEGIN
+    UPDATE AssetsHasBreaches
+    SET Assets_asset_id = new_asset_id,
+        Breaches_breach_id = new_breach_id
+    WHERE Assets_asset_id = old_asset_id
+        AND Breaches_breach_id = old_breach_id;
+END //
+DELIMITER ;
+
+-- #############################
+-- DELETE AssetsHasBreaches
+-- #############################
+DROP PROCEDURE IF EXISTS sp_DeleteAssetsHasBreaches;
+
+DELIMITER //
+CREATE PROCEDURE sp_DeleteAssetsHasBreaches(
+    IN a_asset_id INT,
+    IN b_breach_id INT
+)
+BEGIN
+    DECLARE error_message VARCHAR(255);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+        DELETE FROM AssetsHasBreaches
+        WHERE Assets_asset_id = a_asset_id
+            and Breaches_breach_id = b_breach_id;
+
+        IF ROW_COUNT() = 0 THEN
+            SET error_message = CONCAT(
+                'No matching record in AssetsHasBreaches for Asset ID: ',
+                a_asset_id, ' and Breach ID:', b_breach_id
+            );
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = error_message;
+        END IF;
+
+    COMMIT;
+END //
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
