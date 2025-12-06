@@ -328,6 +328,78 @@ app.post('/breaches/create', async function (req, res) {
     }
 });
 
+
+app.post('/assets/create', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+
+        // Create and execute our queries
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_CreateAsset(?, ?, ?, ?, @new_id);`;
+
+        // Store ID of last inserted row
+        const [[[rows]]] = await db.query(query, [
+            data.create_asset_name,
+            data.create_asset_type,
+            data.create_asset_status,
+            data.create_asset_value,
+            
+        ]);
+
+        console.log(`CREATE Asset. ID: ${rows.new_id} ` +
+            `Name: ${data.create_asset_name}`
+        );
+
+        // Redirect the user to the updated webpage
+        res.redirect('/assets');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+app.post('/locations/create', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+
+        // Create and execute our queries
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_CreateLocation(?, ?, ?, ?, @new_id);`;
+
+        // Store ID of last inserted row
+        const [[[rows]]] = await db.query(query, [
+            data.create_location_lat,
+            data.create_location_long,            
+            data.create_location_name,
+            data.create_location_building_type,
+
+        ]);
+
+        console.log(`CREATE Location. ID: ${rows.new_id} ` +
+            `Name: ${data.create_location_name}`
+        );
+
+        // Redirect the user to the updated webpage
+        res.redirect('/locations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+
+
+
+
+
 app.post('/megacorporationshaslocations/create', async function (req, res) {
     try {
         // Parse frontend form information
@@ -369,7 +441,7 @@ app.post('/megacorporationshaslocations/create', async function (req, res) {
             console.error('Error executing queries:', error);
             // Send a generic error message to the browser
             res.status(500).send(
-                'An error occurred while executing the database queries. TEST'
+                'An error occurred while executing the database queries.'
             );
         }
     }
@@ -441,6 +513,73 @@ app.post('/breaches/update', async function (req, res) {
     }
 });
 
+app.post('/assets/update', async function (req, res) {
+    try {
+        // Parse frontend form information
+        const data = req.body;
+
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = 'CALL sp_UpdateAsset(?, ?, ?, ?, ?);';
+        await db.query(query, [
+            data.update_asset_id,
+            data.update_asset_name,
+            data.update_asset_type,
+            data.update_asset_status,
+            data.update_asset_value,
+
+        ]);
+
+        console.log(`UPDATE Asset. ID: ${data.update_asset_id} ` +
+            `NAME: ${data.update_asset_name}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/assets');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+app.post('/locations/update', async function (req, res) {
+    try {
+        // Parse frontend form information
+        const data = req.body;
+
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = 'CALL sp_UpdateLocation(?, ?, ?, ?, ?);';
+        await db.query(query, [
+            data.update_location_id,
+            data.update_location_lat,
+            data.update_location_long,
+            data.update_location_name,
+            data.update_location_building_type,
+
+        ]);
+
+        console.log(`UPDATE Location. ID: ${data.update_location_id} ` +
+            `NAME: ${data.update_location_name}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/locations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+
+
+
 app.post('/megacorporationshaslocations/update', async function (req, res) {
     try {
         // Parse frontend form information
@@ -502,10 +641,6 @@ app.post('/megacorporations/delete', async function (req, res) {
     }
 });
 
-
-
-
-
 app.post('/breaches/delete', async function (req, res) {
     try {
         // Parse frontend form information
@@ -556,6 +691,55 @@ app.post('/cyberagents/delete', async function (req, res) {
     }
 });
 
+app.post('/assets/delete', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_DeleteAsset(?);`;
+        await db.query(query, [data.delete_asset_id]);
+        console.log(data)
+        console.log(`DELETE Asset. ID: ${data.delete_asset_id} ` +
+            `Name: ${data.delete_asset_name}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/assets');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+app.post('/locations/delete', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_DeleteLocation(?);`;
+        await db.query(query, [data.delete_location_id]);
+        console.log(data)
+        console.log(`DELETE Location. ID: ${data.delete_location_id} ` +
+            `Name: ${data.delete_location_name}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/locations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
 
 
 
