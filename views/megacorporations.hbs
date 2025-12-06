@@ -29,6 +29,7 @@
             {{! DELETE form }}
             <form id='delete_megacorp_form' method='POST' action='/megacorporations/delete'>
                 <input type='hidden' name='delete_megacorp_id' value='{{this.megacorp_id}}' />
+                <input type='hidden' name='delete_megacorp_name' value='{{this.name}}' />
                 <td>
                     <button type='submit'>
                         Delete
@@ -75,10 +76,3 @@
     <input type='submit' />
 </form>
 
-{{! RESET Database form }}
-<h2>Reset Database</h2>
-<form id='reset_db_form' method='POST' action='/reset'>
-    <button type='submit' onclick='return confirm("Warning: Resetting the database will undo all changes.");'>
-        Reset Database
-    </button>
-</form>

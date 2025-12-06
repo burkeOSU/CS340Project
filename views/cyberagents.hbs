@@ -31,8 +31,9 @@
             <td>{{this.location_name}}</td>
 
             {{! DELETE form }}
-            <form id='delete_agent_form'>
+            <form id='delete_agent_form' method='POST' action='/cyberagents/delete'>
                 <input type='hidden' name='delete_agent_id' value='{{this.agent_id}}' />
+                <input type="hidden" name="delete_agent_name" value="{{this.name}}" />
                 <td>
                     <button type='submit'>
                         Delete

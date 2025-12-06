@@ -36,8 +36,9 @@
             <td>{{this.megacorp_name}}</td>
 
             {{! DELETE form }}
-            <form id='delete_breach_form'>
+            <form id='delete_breach_form' method='POST' action='/breaches/delete'>
                 <input type='hidden' name='delete_breach_id' value='{{this.breach_id}}' />
+                <input type='hidden' name='delete_date_of_breach' value='{{this.date_of_breach}}' />
                 <td>
                     <button type='submit'>
                         Delete
@@ -51,7 +52,7 @@
 
 {{! CREATE form }}
 <h2>Create a Breach</h2>
-<form class='cuForm' id='create_breach_form'>
+<form class='cuForm' id='create_breach_form' method='POST' action='/breaches/create'>
     <label for='create_breach_date_of_breach'>Date of Breach: </label>
     <input type='datetime-local' name='create_breach_date_of_breach' id='create_breach_date_of_breach' required />
 
@@ -83,7 +84,7 @@
 
 {{! UPDATE form }}
 <h2>Update a Breach</h2>
-<form class='cuForm' id='update_breach_form'>
+<form class='cuForm' id='update_breach_form'  method='POST' action='/breaches/update'>
     <label for='update_breach_id'>Breach to Update: </label>
     <select name='update_breach_id' id='update_breach_id' required>
         {{! Select breach drop-down option }}

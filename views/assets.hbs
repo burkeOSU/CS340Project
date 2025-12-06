@@ -31,8 +31,9 @@
             <td>{{this.value}}</td>
 
             {{! DELETE form }}
-            <form id='delete_asset_form'>
+            <form id='delete_asset_form' method='POST' action='/assets/delete'>
                 <input type='hidden' name='delete_asset_id' value='{{this.asset_id}}' />
+                <input type="hidden" name="delete_asset_name" value="{{this.name}}" />
                 <td>
                     <button type='submit'>
                         Delete
@@ -46,12 +47,12 @@
 
 {{! CREATE form }}
 <h2>Create an Asset</h2>
-<form class='cuForm' id='create_asset_form'>
-    <label for='create_asset_date'>Name: </label>
+<form class='cuForm' id='create_asset_form' method='POST' action='/assets/create'>
+    <label for='create_asset_name'>Name: </label>
     <input type='text' name='create_asset_name' id='create_asset_name' required />
 
-    <label for='create_asset_asset_type'>Asset Type: </label>
-    <input type='text' name='create_asset_asset_type' id='create_asset_asset_type' required />
+    <label for='create_asset_type'>Asset Type: </label>
+    <input type='text' name='create_asset_type' id='create_asset_type' required />
 
     <label for='create_asset_status'>Status: </label>
     <input type='text' name='create_asset_status' id='create_asset_status' required />
@@ -64,7 +65,7 @@
 
 {{! UPDATE form }}
 <h2>Update an Asset</h2>
-<form class='cuForm' id='update_asset_form'>
+<form class='cuForm' id='update_asset_form' method='POST' action='/assets/update'>
     <label for='update_asset_id'>Asset to Update: </label>
     <select name='update_asset_id' id='update_asset_id' required>
         {{! Select asset drop-down option }}
@@ -76,11 +77,11 @@
         {{/each}}
     </select>
 
-    <label for='update_asset_date'>Name: </label>
+    <label for='update_asset_name'>Name: </label>
     <input type='text' name='update_asset_name' id='update_asset_name' required />
 
-    <label for='update_asset_asset_type'>Asset Type: </label>
-    <input type='text' name='update_asset_asset_type' id='update_asset_asset_type' required />
+    <label for='update_asset_type'>Asset Type: </label>
+    <input type='text' name='update_asset_type' id='update_asset_type' required />
 
     <label for='update_asset_status'>Status: </label>
     <input type='text' name='update_asset_status' id='update_asset_status' required />

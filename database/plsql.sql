@@ -188,6 +188,20 @@ DELIMITER ;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- #############################
 -- DELETE Cyberagents
 -- #############################
@@ -236,28 +250,185 @@ DELIMITER ;
 
 
 
+-- #############################
+-- CREATE Asset
+-- #############################
+DROP PROCEDURE IF EXISTS sp_CreateAsset;
+
+DELIMITER //
+CREATE PROCEDURE sp_CreateAsset(
+    IN a_name VARCHAR(60),
+    IN a_asset_type VARCHAR(60),
+    IN a_status VARCHAR(60),
+    IN a_value DECIMAL(10,2),
+    OUT a_id INT)
+
+BEGIN
+    INSERT INTO Assets (name, asset_type, status, value) 
+    VALUES (a_name, a_asset_type, a_status, a_value);
+
+    -- Store the ID of the last inserted row
+    SELECT LAST_INSERT_ID() into a_id;
+    -- Display the ID of the last inserted Asset.
+    SELECT LAST_INSERT_ID() AS 'new_id';
+
+END //
+DELIMITER ;
+
+
+-- #############################
+-- UPDATE Asset
+-- #############################
+DROP PROCEDURE IF EXISTS sp_UpdateAsset;
+
+DELIMITER //
+CREATE PROCEDURE sp_UpdateAsset(    IN a_id INT, 
+                                    IN a_name VARCHAR(60),
+                                    IN a_asset_type VARCHAR(60),
+                                    IN a_status VARCHAR(60),
+                                    IN a_value DECIMAL(10,2)
+)
+
+BEGIN
+    UPDATE Assets SET   name = a_name,
+                        asset_type = a_asset_type,
+                        status = a_status,
+                        value = a_value
+
+                        WHERE asset_id = a_id; 
+END //
+DELIMITER ;
+
+-- #############################
+-- DELETE Asset
+-- #############################
+
+DROP PROCEDURE IF EXISTS sp_DeleteAsset;
+
+DELIMITER //
+CREATE PROCEDURE sp_DeleteAsset(IN a_id INT)
+BEGIN
+    DECLARE error_message VARCHAR(255);
+
+ -- error handling
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+                
+        -- Roll back the transaction on any error
+        ROLLBACK;
+        -- Propogate the custom error message to the caller
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+        -- Deleting corresponding rows from the BreachesHasCyberAgents
+        DELETE FROM AssetsHasBreaches WHERE Assets_asset_id = a_id;
+        -- Delete Asset from main table
+        DELETE FROM Assets WHERE asset_id = a_id;
+
+        -- ROW_COUNT() returns the number of rows affected by the last DELETE
+        IF ROW_COUNT() = 0 THEN
+            SET error_message = CONCAT('No matching record found in Assets for id: ', a_id);
+            -- Trigger custom error, invoke EXIT HANDLER
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = error_message;
+        END IF;
+
+    COMMIT;
+
+END //
+DELIMITER ;
 
 
 
+-- #############################
+-- CREATE Location
+-- #############################
+DROP PROCEDURE IF EXISTS sp_CreateLocation;
 
+DELIMITER //
+CREATE PROCEDURE sp_CreateLocation(
+    IN l_lat DECIMAL(10,8),
+    IN l_long DECIMAL(11,8),
+    IN l_name VARCHAR(60),
+    IN l_building_type VARCHAR(60),
 
+    OUT l_id INT)
 
+BEGIN
+    INSERT INTO Locations(lat, `long`, name, building_type) 
+    VALUES (l_lat, l_long, l_name, l_building_type);
 
+    -- Store the ID of the last inserted row
+    SELECT LAST_INSERT_ID() into l_id;
+    -- Display the ID of the last inserted Asset.
+    SELECT LAST_INSERT_ID() AS 'new_id';
 
+END //
+DELIMITER ;
 
+-- #############################
+-- UPDATE Location
+-- #############################
+DROP PROCEDURE IF EXISTS sp_UpdateLocation;
 
+DELIMITER //
+CREATE PROCEDURE sp_UpdateLocation( IN l_id INT, 
+                                    IN l_lat DECIMAL(10,8),
+                                    IN l_long DECIMAL(11,8),
+                                    IN l_name VARCHAR(60),
+                                    IN l_building_type VARCHAR(60)
+)
 
+BEGIN
+    UPDATE Locations SET   lat = l_lat,
+                        `long` = l_long,
+                        name = l_name,
+                        building_type = l_building_type
 
+                        WHERE location_id = l_id; 
+END //
+DELIMITER ;
 
+-- #############################
+-- DELETE Location
+-- #############################
 
+DROP PROCEDURE IF EXISTS sp_DeleteLocation;
 
+DELIMITER //
+CREATE PROCEDURE sp_DeleteLocation(IN l_id INT)
+BEGIN
+    DECLARE error_message VARCHAR(255);
 
+ -- error handling
 
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+                
+        -- Roll back the transaction on any error
+        ROLLBACK;
+        -- Propogate the custom error message to the caller
+        RESIGNAL;
+    END;
 
+    START TRANSACTION;
+        -- Deleting corresponding rows from the MegacorporationsHasLocations
+        DELETE FROM MegacorporationsHasLocations WHERE Locations_location_id = l_id;
+        -- Delete Location from main table
+        DELETE FROM Locations WHERE location_id = l_id;
 
+        -- ROW_COUNT() returns the number of rows affected by the last DELETE
+        IF ROW_COUNT() = 0 THEN
+            SET error_message = CONCAT('No matching record found in Locations for id: ', l_id);
+            -- Trigger custom error, invoke EXIT HANDLER
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = error_message;
+        END IF;
 
+    COMMIT;
 
-
+END //
+DELIMITER ;
 
 
 
