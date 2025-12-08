@@ -15,3 +15,5 @@ All files were based off OSU's Web App UI template.
 W3Schools. “SQL Aliases.” W3Schools, www.w3schools.com/sql/sql_alias.asp. Accessed 11 Nov 2025.
 
 “How do I console.log() SQL error handling?” prompt. ChatGPT, 28 Nov 2025, https://chatgpt.com/
+
+“How to replace empty input with 'Unknown'?” prompt. ChatGPT, 8 Dec 2025, https://chatgpt.com/

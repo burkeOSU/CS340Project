@@ -168,23 +168,24 @@ app.get('/megacorporationshaslocations', async function (req, res) {
 
         //Unique megacorporations for dropdown menu
         const megacorpDropdownQuery = `
-            SELECT
+            SELECT DISTINCT
                 M.megacorp_id,
                 M.name AS megacorporation_name
             FROM Megacorporations M
-            ORDER BY M.name;
+            ORDER BY M.megacorp_id;
             `; 
         const [megacorporations] = await db.query(megacorpDropdownQuery);
 
         //Unique locations for dropdown menu
-        const locationDropDownQuery = `
+        const locationDropdownQuery = `
             SELECT DISTINCT
                 L.location_id,
                 L.name AS location_name
             FROM Locations L
-            ORDER BY L.name;`;
+            ORDER BY L.location_id;
+            `;
 
-        const [locations] = await db.query(locationDropDownQuery);
+        const [locations] = await db.query(locationDropdownQuery);
 
         //Unique Render the megacorporationshaslocations.hbs file, and also send the renderer
         res.render('megacorporationshaslocations', { 
@@ -219,8 +220,26 @@ app.get('/breacheshascyberagents', async function (req, res) {
         const [breacheshascyberagents] = await db.query(query);
         
         // dropdown queries
-        const [cyberagents] = await db.query('SELECT agent_id, name AS agent_name FROM CyberAgents ORDER BY agent_id ASC;');
-        const [breaches] = await db.query('SELECT breach_id, date_of_breach FROM Breaches ORDER BY date_of_breach DESC;');
+        const cyberagentsDropdownQuery = `
+            SELECT DISTINCT
+            agent_id, 
+            name AS agent_name 
+            FROM CyberAgents 
+            ORDER BY agent_id ASC;
+            `;
+
+        const [cyberagents] = await db.query(cyberagentsDropdownQuery);
+
+
+        const breachesDropdownQuery = `
+        SELECT DISTINCT
+        breach_id, 
+        date_of_breach 
+        FROM Breaches 
+        ORDER BY breach_id ASC;
+        `;
+        
+        const [breaches] = await db.query(breachesDropdownQuery);
 
         // Render the breacheshascyberagents.hbs file, and also send the renderer
         res.render('breacheshascyberagents', { breacheshascyberagents, cyberagents, breaches });
@@ -248,8 +267,25 @@ app.get('/assetshasbreaches', async function (req, res) {
         const [assetshasbreaches] = await db.query(query);
 
         // dropdown queries
-        const [assets] = await db.query('SELECT asset_id, name AS asset_name FROM Assets ORDER BY asset_id ASC;');
-        const [breaches] = await db.query('SELECT breach_id, date_of_breach FROM Breaches ORDER BY date_of_breach DESC');
+        const assetsDropdownQuery = `
+            SELECT DISTINCT
+            asset_id, 
+            name AS asset_name 
+            FROM Assets 
+            ORDER BY asset_id ASC;
+        `;
+
+        const [assets] = await db.query(assetsDropdownQuery);
+
+        const breachesDropdownQuery = `
+            SELECT DISTINCT
+            breach_id, 
+            date_of_breach 
+            FROM Breaches 
+            ORDER BY breach_id ASC;
+        `;
+
+        const [breaches] = await db.query(breachesDropdownQuery);
 
         // Render the assetshasbreaches.hbs file, and also send the renderer
         res.render('assetshasbreaches', { assetshasbreaches,assets, breaches });
@@ -301,6 +337,21 @@ app.post('/breaches/create', async function (req, res) {
         // Create and execute our queries
         // Using parameterized queries (Prevents SQL injection attacks)
         const query = `CALL sp_CreateBreach(?, ?, ?, ?, ?, ?, @new_id);`;
+
+
+        //Citation for breaches/create form
+        //AI Tool used: https://chatgpt.com
+        //Prompt: "How to replace empty input with 'Unknown'?"
+        //
+        //
+        if(!data.create_breach_hack_type) {
+            data.create_breach_hack_type = "Unknown";
+        };
+        if(!data.create_breach_severity_level) {
+            data.create_breach_severity_level = "Unknown";
+        };
+
+
 
         // Store ID of last inserted row
         const [[[rows]]] = await db.query(query, [
@@ -544,7 +595,7 @@ app.post('/assetshasbreaches/create', async function (req, res) {
         if (error.sqlState === '45000' || error.code === 'ER_DUP_ENTRY') {
             res.send(`<script>
                 if(confirm("${error.message} Click OK to ignore the duplicate.")) {
-                    window.location.href = "/breacheshasbreaches";
+                    window.location.href = "/assetshasbreaches";
                 } else {
                     window.history.back();
                 }
