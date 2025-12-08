@@ -994,11 +994,6 @@ app.post('/assetshasbreaches/delete', async function (req, res) {
     }
 });
 
-
-
-
-
-
 app.post('/megacorporationshaslocations/delete', async function (req, res) {
     try {
         // Parse frontend form information
@@ -1054,5 +1049,4 @@ app.listen(PORT, function () {
             PORT +
             '; press Ctrl-C to terminate.'
     );
-
 });
