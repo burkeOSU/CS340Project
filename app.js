@@ -36,57 +36,57 @@
 // ########## SETUP
 
 // Express
-const express = require("express");
+const express = require('express');
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
+app.use(express.static('public'));
 
 const PORT = 29238;
 
 // Database
-const db = require("./database/db-connector");
+const db = require('./database/db-connector');
 
 // Handlebars
-const { engine } = require("express-handlebars"); // Import express-handlebars engine
-app.engine(".hbs", engine({ extname: ".hbs" })); // Create instance of handlebars
-app.set("view engine", ".hbs"); // Use handlebars engine for *.hbs files.
+const { engine } = require('express-handlebars'); // Import express-handlebars engine
+app.engine('.hbs', engine({ extname: '.hbs' })); // Create instance of handlebars
+app.set('view engine', '.hbs'); // Use handlebars engine for *.hbs files.
 
 // ########################################
 // ########## ROUTE HANDLERS
 
 // READ ROUTES
-app.get("/", async function (req, res) {
-  try {
-    res.render("home"); // Render the home.hbs file
-  } catch (error) {
-    console.error("Error rendering page:", error);
-    // Send a generic error message to the browser
-    res.status(500).send("An error occurred while rendering the page.");
-  }
+app.get('/', async function (req, res) {
+    try {
+        res.render('home'); // Render the home.hbs file
+    } catch (error) {
+        console.error('Error rendering page:', error);
+        // Send a generic error message to the browser
+        res.status(500).send('An error occurred while rendering the page.');
+    }
 });
 
-app.get("/megacorporations", async function (req, res) {
-  try {
-    const query = `SELECT * FROM Megacorporations`;
-    const [megacorporations] = await db.query(query);
-    // Render the megacorporations.hbs file, and also send the renderer
-    res.render("megacorporations", { megacorporations: megacorporations });
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+app.get('/megacorporations', async function (req, res) {
+    try {
+        const query = `SELECT * FROM Megacorporations`;
+        const [megacorporations] = await db.query(query);
+        // Render the megacorporations.hbs file, and also send the renderer
+        res.render('megacorporations', { megacorporations: megacorporations });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.get("/breaches", async function (req, res) {
-  try {
-    // join megacorp id and name to breaches entity
-    // "B.*" = "* FROM Breaches"
-    // CASE = returns YES/NO
-    const query1 = `
+app.get('/breaches', async function (req, res) {
+    try {
+        // join megacorp id and name to breaches entity
+        // "B.*" = "* FROM Breaches"
+        // CASE = returns YES/NO
+        const query1 = `
             SELECT
                 B.*,
                 CASE
@@ -101,29 +101,26 @@ app.get("/breaches", async function (req, res) {
             FROM Breaches B
             JOIN Megacorporations M ON B.Megacorporations_megacorp_id = M.megacorp_id
             ORDER BY B.date_of_breach DESC;`;
-    const query2 = `SELECT megacorp_id, name AS megacorp_name FROM Megacorporations`;
-    const [breaches] = await db.query(query1);
-    const [megacorporations] = await db.query(query2);
-    // Render the breaches.hbs file, and also send the renderer
-    res.render("breaches", {
-      breaches: breaches,
-      megacorporations: megacorporations,
-    });
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        const query2 = `SELECT megacorp_id, name AS megacorp_name FROM Megacorporations`;
+        const [breaches] = await db.query(query1);
+        const [megacorporations] = await db.query(query2);
+        // Render the breaches.hbs file, and also send the renderer
+        res.render('breaches', { breaches: breaches, megacorporations: megacorporations });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.get("/cyberagents", async function (req, res) {
-  try {
-    // join location id and location name to cyberagents entity
-    // "C.*" = "* FROM CyberAgents"
-    // CASE = returns YES/NO
-    const query1 = `
+app.get('/cyberagents', async function (req, res) {
+    try {
+        // join location id and location name to cyberagents entity
+        // "C.*" = "* FROM CyberAgents"
+        // CASE = returns YES/NO
+        const query1 = `
             SELECT
                 C.*,
                 CASE
@@ -134,57 +131,54 @@ app.get("/cyberagents", async function (req, res) {
             FROM CyberAgents C
             JOIN Locations L ON C.Locations_location_id = L.location_id
             ORDER BY C.agent_id ASC;`;
-    const query2 = `SELECT location_id, name AS location_name FROM Locations`;
-    const [cyberagents] = await db.query(query1);
-    const [locations] = await db.query(query2);
-    // Render the cyberagents.hbs file, and also send the renderer
-    res.render("cyberagents", {
-      cyberagents: cyberagents,
-      locations: locations,
-    });
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        const query2 = `SELECT location_id, name AS location_name FROM Locations`;
+        const [cyberagents] = await db.query(query1);
+        const [locations] = await db.query(query2);
+        // Render the cyberagents.hbs file, and also send the renderer
+        res.render('cyberagents', { cyberagents: cyberagents, locations: locations });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.get("/assets", async function (req, res) {
-  try {
-    const query = `SELECT * FROM Assets`;
-    const [assets] = await db.query(query);
-    // Render the assets.hbs file, and also send the renderer
-    res.render("assets", { assets: assets });
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+app.get('/assets', async function (req, res) {
+    try {
+        const query = `SELECT * FROM Assets`;
+        const [assets] = await db.query(query);
+        // Render the assets.hbs file, and also send the renderer
+        res.render('assets', { assets: assets });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.get("/locations", async function (req, res) {
-  try {
-    const query = `SELECT * FROM Locations`;
-    const [locations] = await db.query(query);
-    // Render the locations.hbs file, and also send the renderer
-    res.render("locations", { locations: locations });
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+app.get('/locations', async function (req, res) {
+    try {
+        const query = `SELECT * FROM Locations`;
+        const [locations] = await db.query(query);
+        // Render the locations.hbs file, and also send the renderer
+        res.render('locations', { locations: locations });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.get("/megacorporationshaslocations", async function (req, res) {
-  try {
-    // join megacorp id, megacorp name, location id and location name together
-    const tableQuery = `
+app.get('/megacorporationshaslocations', async function (req, res) {
+    try {
+        // join megacorp id, megacorp name, location id and location name together
+        const tableQuery = `
             SELECT
                 MHL.Megacorporations_megacorp_id AS megacorp_id,
                 M.name AS megacorporation_name,
@@ -196,20 +190,20 @@ app.get("/megacorporationshaslocations", async function (req, res) {
             ORDER BY megacorp_id, location_id;
             `;
 
-    const [megacorporationshaslocations] = await db.query(tableQuery);
+        const [megacorporationshaslocations] = await db.query(tableQuery);
 
-    //Unique megacorporations for dropdown menu
-    const megacorpDropdownQuery = `
+        //Unique megacorporations for dropdown menu
+        const megacorpDropdownQuery = `
             SELECT DISTINCT
                 M.megacorp_id,
                 M.name AS megacorporation_name
             FROM Megacorporations M
             ORDER BY M.megacorp_id;
-            `;
-    const [megacorporations] = await db.query(megacorpDropdownQuery);
+            `; 
+        const [megacorporations] = await db.query(megacorpDropdownQuery);
 
-    //Unique locations for dropdown menu
-    const locationDropdownQuery = `
+        //Unique locations for dropdown menu
+        const locationDropdownQuery = `
             SELECT DISTINCT
                 L.location_id,
                 L.name AS location_name
@@ -217,27 +211,29 @@ app.get("/megacorporationshaslocations", async function (req, res) {
             ORDER BY L.location_id;
             `;
 
-    const [locations] = await db.query(locationDropdownQuery);
+        const [locations] = await db.query(locationDropdownQuery);
 
-    //Unique Render the megacorporationshaslocations.hbs file, and also send the renderer
-    res.render("megacorporationshaslocations", {
-      megacorporationshaslocations,
-      megacorporations,
-      locations,
-    });
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        //Unique Render the megacorporationshaslocations.hbs file, and also send the renderer
+        res.render('megacorporationshaslocations', { 
+            megacorporationshaslocations,
+            megacorporations,
+            locations  
+        });
+
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.get("/breacheshascyberagents", async function (req, res) {
-  try {
-    // join breach id, date of breach, agent id and agent name together
-    const query = `
+
+app.get('/breacheshascyberagents', async function (req, res) {
+    try {
+        // join breach id, date of breach, agent id and agent name together
+        const query = `
             SELECT
                 BHC.Breaches_breach_id AS breach_id,
                 B.date_of_breach,
@@ -247,10 +243,10 @@ app.get("/breacheshascyberagents", async function (req, res) {
             JOIN Breaches B ON B.breach_id = BHC.Breaches_breach_id
             JOIN CyberAgents C ON C.agent_id = BHC.CyberAgents_agent_id
             ORDER BY B.date_of_breach DESC;`;
-    const [breacheshascyberagents] = await db.query(query);
-
-    // dropdown queries
-    const cyberagentsDropdownQuery = `
+        const [breacheshascyberagents] = await db.query(query);
+        
+        // dropdown queries
+        const cyberagentsDropdownQuery = `
             SELECT DISTINCT
             agent_id, 
             name AS agent_name 
@@ -258,37 +254,33 @@ app.get("/breacheshascyberagents", async function (req, res) {
             ORDER BY agent_id ASC;
             `;
 
-    const [cyberagents] = await db.query(cyberagentsDropdownQuery);
+        const [cyberagents] = await db.query(cyberagentsDropdownQuery);
 
-    const breachesDropdownQuery = `
+
+        const breachesDropdownQuery = `
         SELECT DISTINCT
         breach_id, 
         date_of_breach 
         FROM Breaches 
         ORDER BY breach_id ASC;
         `;
+        
+        const [breaches] = await db.query(breachesDropdownQuery);
 
-    const [breaches] = await db.query(breachesDropdownQuery);
-
-    // Render the breacheshascyberagents.hbs file, and also send the renderer
-    res.render("breacheshascyberagents", {
-      breacheshascyberagents,
-      cyberagents,
-      breaches,
-    });
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        // Render the breacheshascyberagents.hbs file, and also send the renderer
+        res.render('breacheshascyberagents', { breacheshascyberagents, cyberagents, breaches });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.');
+    }
 });
 
-app.get("/assetshasbreaches", async function (req, res) {
-  try {
-    // join asset id, asset name, breach id and date of breach together
-    const query = `
+app.get('/assetshasbreaches', async function (req, res) {
+    try {
+        // join asset id, asset name, breach id and date of breach together
+        const query = `
             SELECT
                 AHB.Assets_asset_id AS asset_id,
                 A.name AS asset_name,
@@ -298,10 +290,10 @@ app.get("/assetshasbreaches", async function (req, res) {
             JOIN Assets A ON A.asset_id = AHB.Assets_asset_id
             JOIN Breaches B ON B.breach_id = AHB.Breaches_breach_id
             ORDER BY B.date_of_breach DESC;`;
-    const [assetshasbreaches] = await db.query(query);
+        const [assetshasbreaches] = await db.query(query);
 
-    // dropdown queries
-    const assetsDropdownQuery = `
+        // dropdown queries
+        const assetsDropdownQuery = `
             SELECT DISTINCT
             asset_id, 
             name AS asset_name 
@@ -309,9 +301,9 @@ app.get("/assetshasbreaches", async function (req, res) {
             ORDER BY asset_id ASC;
         `;
 
-    const [assets] = await db.query(assetsDropdownQuery);
+        const [assets] = await db.query(assetsDropdownQuery);
 
-    const breachesDropdownQuery = `
+        const breachesDropdownQuery = `
             SELECT DISTINCT
             breach_id, 
             date_of_breach 
@@ -319,816 +311,819 @@ app.get("/assetshasbreaches", async function (req, res) {
             ORDER BY breach_id ASC;
         `;
 
-    const [breaches] = await db.query(breachesDropdownQuery);
+        const [breaches] = await db.query(breachesDropdownQuery);
 
-    // Render the assetshasbreaches.hbs file, and also send the renderer
-    res.render("assetshasbreaches", { assetshasbreaches, assets, breaches });
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        // Render the assetshasbreaches.hbs file, and also send the renderer
+        res.render('assetshasbreaches', { assetshasbreaches,assets, breaches });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
 // CREATE ROUTES
-app.post("/megacorporations/create", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/megacorporations/create', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
 
-    // Create and execute our queries
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_CreateMegacorporation(?, ?, @new_id);`;
+        // Create and execute our queries
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_CreateMegacorporation(?, ?, @new_id);`;
 
-    // Store ID of last inserted row
-    const [[[rows]]] = await db.query(query, [
-      data.create_megacorp_name,
-      data.create_megacorp_industry,
-    ]);
+        // Store ID of last inserted row
+        const [[[rows]]] = await db.query(query, [
+            data.create_megacorp_name,
+            data.create_megacorp_industry
+        ]);
 
-    console.log(
-      `CREATE Megacorporation. ID: ${rows.new_id} ` +
-        `Name: ${data.create_megacorp_name}`
-    );
+        console.log(`CREATE Megacorporation. ID: ${rows.new_id} ` +
+            `Name: ${data.create_megacorp_name}`
+        );
 
-    // Redirect the user to the updated webpage
-    res.redirect("/megacorporations");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
-});
-
-app.post("/breaches/create", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
-
-    // Create and execute our queries
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_CreateBreach(?, ?, ?, ?, ?, ?, @new_id);`;
-
-    //Citation for breaches/create form
-    //AI Tool used: https://chatgpt.com
-    //Prompt: "How to replace empty input with 'Unknown'?"
-    //
-    //
-    if (!data.create_breach_hack_type) {
-      data.create_breach_hack_type = "Unknown";
+        // Redirect the user to the updated webpage
+        res.redirect('/megacorporations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
     }
-    if (!data.create_breach_severity_level) {
-      data.create_breach_severity_level = "Unknown";
+});
+
+app.post('/breaches/create', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+
+        // Create and execute our queries
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_CreateBreach(?, ?, ?, ?, ?, ?, @new_id);`;
+
+
+        //Citation for breaches/create form
+        //AI Tool used: https://chatgpt.com
+        //Prompt: "How to replace empty input with 'Unknown'?"
+        //
+        //
+        if(!data.create_breach_hack_type) {
+            data.create_breach_hack_type = "Unknown";
+        };
+        if(!data.create_breach_severity_level) {
+            data.create_breach_severity_level = "Unknown";
+        };
+
+
+
+        // Store ID of last inserted row
+        const [[[rows]]] = await db.query(query, [
+            data.create_breach_date_of_breach,
+            data.create_breach_ongoing ? 1 : 0,
+            data.create_breach_hack_type,
+            data.create_breach_severity_level,
+            data.create_breach_success ? 1 : 0,
+            data.create_breach_megacorp_id
+        ]);
+
+        console.log(`CREATE Breach. ID: ${rows.new_id} ` +
+            `Name: ${data.create_date_of_breach}`
+        );
+
+        // Redirect the user to the updated webpage
+        res.redirect('/breaches');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
     }
-
-    // Store ID of last inserted row
-    const [[[rows]]] = await db.query(query, [
-      data.create_breach_date_of_breach,
-      data.create_breach_ongoing ? 1 : 0,
-      data.create_breach_hack_type,
-      data.create_breach_severity_level,
-      data.create_breach_success ? 1 : 0,
-      data.create_breach_megacorp_id,
-    ]);
-
-    console.log(
-      `CREATE Breach. ID: ${rows.new_id} ` +
-        `Name: ${data.create_date_of_breach}`
-    );
-
-    // Redirect the user to the updated webpage
-    res.redirect("/breaches");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
 });
 
-app.post("/cyberagents/create", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/cyberagents/create', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
 
-    // Create and execute our queries
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_CreateCyberAgent(?, ?, ?, ?,@new_id);`;
+        // Create and execute our queries
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_CreateCyberAgent(?, ?, ?, ?,@new_id);`;
 
-    // Store ID of last inserted row
-    const [[[rows]]] = await db.query(query, [
-      data.create_agent_name,
-      data.create_agent_job_title,
-      data.create_agent_hired_by_us ? 1 : 0,
-      data.create_agent_location_id,
-    ]);
+        // Store ID of last inserted row
+        const [[[rows]]] = await db.query(query, [
+            data.create_agent_name,
+            data.create_agent_job_title,
+            data.create_agent_hired_by_us ? 1: 0,
+            data.create_agent_location_id
+        ]);
 
-    console.log(
-      `CREATE CyberAgent. ID: ${rows.new_id} ` +
-        `Name: ${data.create_agent_name} ` +
-        `Hired?: ${data.create_agent_hired_by_us}`
-    );
+        console.log(`CREATE CyberAgent. ID: ${rows.new_id} ` +
+            `Name: ${data.create_agent_name} ` +
+            `Hired?: ${data.create_agent_hired_by_us}`
+        );
 
-    // Redirect the user to the updated webpage
-    res.redirect("/cyberagents");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        // Redirect the user to the updated webpage
+        res.redirect('/cyberagents');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/assets/create", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/assets/create', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
 
-    // Create and execute our queries
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_CreateAsset(?, ?, ?, ?, @new_id);`;
+        // Create and execute our queries
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_CreateAsset(?, ?, ?, ?, @new_id);`;
 
-    // Store ID of last inserted row
-    const [[[rows]]] = await db.query(query, [
-      data.create_asset_name,
-      data.create_asset_type,
-      data.create_asset_status,
-      data.create_asset_value,
-    ]);
+        // Store ID of last inserted row
+        const [[[rows]]] = await db.query(query, [
+            data.create_asset_name,
+            data.create_asset_type,
+            data.create_asset_status,
+            data.create_asset_value,
+            
+        ]);
 
-    console.log(
-      `CREATE Asset. ID: ${rows.new_id} ` + `Name: ${data.create_asset_name}`
-    );
+        console.log(`CREATE Asset. ID: ${rows.new_id} ` +
+            `Name: ${data.create_asset_name}`
+        );
 
-    // Redirect the user to the updated webpage
-    res.redirect("/assets");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        // Redirect the user to the updated webpage
+        res.redirect('/assets');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/locations/create", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/locations/create', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
 
-    // Create and execute our queries
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_CreateLocation(?, ?, ?, ?, @new_id);`;
+        // Create and execute our queries
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_CreateLocation(?, ?, ?, ?, @new_id);`;
 
-    // Store ID of last inserted row
-    const [[[rows]]] = await db.query(query, [
-      data.create_location_lat,
-      data.create_location_long,
-      data.create_location_name,
-      data.create_location_building_type,
-    ]);
+        // Store ID of last inserted row
+        const [[[rows]]] = await db.query(query, [
+            data.create_location_lat,
+            data.create_location_long,            
+            data.create_location_name,
+            data.create_location_building_type,
 
-    console.log(
-      `CREATE Location. ID: ${rows.new_id} ` +
-        `Name: ${data.create_location_name}`
-    );
+        ]);
 
-    // Redirect the user to the updated webpage
-    res.redirect("/locations");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        console.log(`CREATE Location. ID: ${rows.new_id} ` +
+            `Name: ${data.create_location_name}`
+        );
+
+        // Redirect the user to the updated webpage
+        res.redirect('/locations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/megacorporationshaslocations/create", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/megacorporationshaslocations/create', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+        
+        console.log(data)
+        // Create and execute our queries
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_CreateMegacorporationsHasLocations(?, ?);`;
 
-    console.log(data);
-    // Create and execute our queries
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_CreateMegacorporationsHasLocations(?, ?);`;
+        // Store ID of last inserted row
+        await db.query(query, [
+            data.create_megacorp_id,
+            data.create_location_id
+        ]);
 
-    // Store ID of last inserted row
-    await db.query(query, [data.create_megacorp_id, data.create_location_id]);
+        console.log(`CREATE Megacorporation:Location relationship. Megacorporation ID: ${data.create_megacorp_id} ` +
+            `Location ID: ${data.create_location_id}`
+        );
 
-    console.log(
-      `CREATE Megacorporation:Location relationship. Megacorporation ID: ${data.create_megacorp_id} ` +
-        `Location ID: ${data.create_location_id}`
-    );
-
-    // Redirect the user to the updated webpage
-    res.redirect("/megacorporationshaslocations");
-  } catch (error) {
-    //Citation for update_megacorp_location_form
-    //AI Tool used: https://chatgpt.com
-    //Prompt: "How do I console.log() SQL error handling?"
-    //
-    //
-    console.log("SQL ERROR:", error);
-    if (error.sqlState === "45000" || error.code === "ER_DUP_ENTRY") {
-      res.send(`<script>
+        // Redirect the user to the updated webpage
+        res.redirect('/megacorporationshaslocations');
+    } catch (error) {
+        //Citation for update_megacorp_location_form
+        //AI Tool used: https://chatgpt.com
+        //Prompt: "How do I console.log() SQL error handling?"
+        //
+        //
+        console.log("SQL ERROR:", error);
+        if (error.sqlState === '45000' || error.code === 'ER_DUP_ENTRY') {
+            res.send(`<script>
                 if(confirm("${error.message} Click OK to ignore the duplicate.")) {
                     window.location.href = "/megacorporationshaslocations";
                 } else {
                     window.history.back();
                 }
             </script>`);
-    } else {
-      console.error("Error executing queries:", error);
-      // Send a generic error message to the browser
-      res
-        .status(500)
-        .send("An error occurred while executing the database queries.");
+        } else {
+            console.error('Error executing queries:', error);
+            // Send a generic error message to the browser
+            res.status(500).send(
+                'An error occurred while executing the database queries.'
+            );
+        }
     }
-  }
 });
 
-app.post("/breacheshascyberagents/create", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/breacheshascyberagents/create', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+        
+        console.log(data)
+        // Create and execute our queries
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_CreateBreachesHasCyberAgents(?, ?);`;
 
-    console.log(data);
-    // Create and execute our queries
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_CreateBreachesHasCyberAgents(?, ?);`;
+        // Store ID of last inserted row
+        await db.query(query, [
+            data.create_breach_id,
+            data.create_agent_id
+        ]);
 
-    // Store ID of last inserted row
-    await db.query(query, [data.create_breach_id, data.create_agent_id]);
+        console.log(`CREATE Breach:CyberAgent relationship. CyberAgent ID: ${data.create_agent_id} ` +
+            `Breach ID: ${data.create_breach_id}`
+        );
 
-    console.log(
-      `CREATE Breach:CyberAgent relationship. CyberAgent ID: ${data.create_agent_id} ` +
-        `Breach ID: ${data.create_breach_id}`
-    );
+        // Redirect the user to the updated webpage
+        res.redirect('/breacheshascyberagents');
 
-    // Redirect the user to the updated webpage
-    res.redirect("/breacheshascyberagents");
-  } catch (error) {
-    console.log("SQL ERROR:", error);
-    if (error.sqlState === "45000" || error.code === "ER_DUP_ENTRY") {
-      res.send(`<script>
+    } catch (error) {
+        console.log("SQL ERROR:", error);
+        if (error.sqlState === '45000' || error.code === 'ER_DUP_ENTRY') {
+            res.send(`<script>
                 if(confirm("${error.message} Click OK to ignore the duplicate.")) {
                     window.location.href = "/breacheshascyberagents";
                 } else {
                     window.history.back();
                 }
             </script>`);
-    } else {
-      console.error("Error executing queries:", error);
-      // Send a generic error message to the browser
-      res
-        .status(500)
-        .send("An error occurred while executing the database queries.");
+        } else {
+            console.error('Error executing queries:', error);
+            // Send a generic error message to the browser
+            res.status(500).send(
+                'An error occurred while executing the database queries.'
+            );
+        }
     }
-  }
 });
 
-app.post("/assetshasbreaches/create", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/assetshasbreaches/create', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+        
+        console.log(data)
+        // Create and execute our queries
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_CreateAssetsHasBreaches(?, ?);`;
 
-    console.log(data);
-    // Create and execute our queries
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_CreateAssetsHasBreaches(?, ?);`;
+        // Store ID of last inserted row
+        await db.query(query, [
+            data.create_asset_id,
+            data.create_breach_id
+        ]);
 
-    // Store ID of last inserted row
-    await db.query(query, [data.create_asset_id, data.create_breach_id]);
+        console.log(`CREATE Asset:Breach relationship. Asset ID: ${data.create_asset_id} ` +
+            `Breach ID: ${data.create_breach_id}`
+        );
 
-    console.log(
-      `CREATE Asset:Breach relationship. Asset ID: ${data.create_asset_id} ` +
-        `Breach ID: ${data.create_breach_id}`
-    );
+        // Redirect the user to the updated webpage
+        res.redirect('/assetshasbreaches');
 
-    // Redirect the user to the updated webpage
-    res.redirect("/assetshasbreaches");
-  } catch (error) {
-    console.log("SQL ERROR:", error);
-    if (error.sqlState === "45000" || error.code === "ER_DUP_ENTRY") {
-      res.send(`<script>
+    } catch (error) {
+        console.log("SQL ERROR:", error);
+        if (error.sqlState === '45000' || error.code === 'ER_DUP_ENTRY') {
+            res.send(`<script>
                 if(confirm("${error.message} Click OK to ignore the duplicate.")) {
                     window.location.href = "/assetshasbreaches";
                 } else {
                     window.history.back();
                 }
             </script>`);
-    } else {
-      console.error("Error executing queries:", error);
-      // Send a generic error message to the browser
-      res
-        .status(500)
-        .send("An error occurred while executing the database queries.");
+        } else {
+            console.error('Error executing queries:', error);
+            // Send a generic error message to the browser
+            res.status(500).send(
+                'An error occurred while executing the database queries.'
+            );
+        }
     }
-  }
 });
+
+
 
 // UPDATE ROUTES
-app.post("/megacorporations/update", async function (req, res) {
-  try {
-    // Parse frontend form information
-    const data = req.body;
+app.post('/megacorporations/update', async function (req, res) {
+    try {
+        // Parse frontend form information
+        const data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = "CALL sp_UpdateMegacorporation(?, ?, ?);";
-    await db.query(query, [
-      data.update_megacorp_id,
-      data.update_megacorp_name,
-      data.update_megacorp_industry,
-    ]);
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = 'CALL sp_UpdateMegacorporation(?, ?, ?);';
+        await db.query(query, [
+            data.update_megacorp_id,
+            data.update_megacorp_name,
+            data.update_megacorp_industry,
+        ]);
 
-    console.log(
-      `UPDATE Megacorporation. ID: ${data.update_megacorp_id} ` +
-        `Name: ${data.update_megacorp_name}`
-    );
+        console.log(`UPDATE Megacorporation. ID: ${data.update_megacorp_id} ` +
+            `Name: ${data.update_megacorp_name}`
+        );
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/megacorporations");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        // Redirect the user to the updated webpage data
+        res.redirect('/megacorporations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/breaches/update", async function (req, res) {
-  try {
-    // Parse frontend form information
-    const data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = "CALL sp_UpdateBreach(?, ?, ?, ?, ?, ?, ?);";
-    await db.query(query, [
-      data.update_breach_id,
-      data.update_breach_date_of_breach,
-      data.update_breach_ongoing ? 1 : 0,
-      data.update_breach_hack_type,
-      data.update_breach_severity_level,
-      data.update_breach_success ? 1 : 0,
-      data.update_breach_megacorp_id,
-    ]);
+app.post('/breaches/update', async function (req, res) {
+    try {
+        // Parse frontend form information
+        const data = req.body;
 
-    console.log(
-      `UPDATE Breach. ID: ${data.update_breach_date_of_breach} ` +
-        `DATETIME: ${data.update_breach_date_of_breach}`
-    );
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = 'CALL sp_UpdateBreach(?, ?, ?, ?, ?, ?, ?);';
+        await db.query(query, [
+            data.update_breach_id,
+            data.update_breach_date_of_breach,
+            data.update_breach_ongoing ? 1 : 0,
+            data.update_breach_hack_type,
+            data.update_breach_severity_level,
+            data.update_breach_success ? 1 : 0,
+            data.update_breach_megacorp_id
+        ]);
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/breaches");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        console.log(`UPDATE Breach. ID: ${data.update_breach_date_of_breach} ` +
+            `DATETIME: ${data.update_breach_date_of_breach}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/breaches');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/cyberagents/update", async function (req, res) {
-  try {
-    // Parse frontend form information
-    const data = req.body;
+app.post('/cyberagents/update', async function (req, res) {
+    try {
+        // Parse frontend form information
+        const data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = "CALL sp_UpdateCyberAgent(?, ?, ?, ?, ?);";
-    await db.query(query, [
-      data.update_agent_id,
-      data.update_agent_name,
-      data.update_agent_job_title,
-      data.update_agent_hired_by_us ? 1 : 0,
-      data.update_agent_location_id,
-    ]);
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = 'CALL sp_UpdateCyberAgent(?, ?, ?, ?, ?);';
+        await db.query(query, [
+            data.update_agent_id,
+            data.update_agent_name,
+            data.update_agent_job_title,
+            data.update_agent_hired_by_us ? 1 : 0,
+            data.update_agent_location_id,
 
-    console.log(
-      `UPDATE CyberAgent. ID: ${data.update_agent_id} ` +
-        `Name: ${data.update_agent_name}`
-    );
+        ]);
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/cyberagents");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        console.log(`UPDATE CyberAgent. ID: ${data.update_agent_id} ` +
+            `Name: ${data.update_agent_name}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/cyberagents');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/assets/update", async function (req, res) {
-  try {
-    // Parse frontend form information
-    const data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = "CALL sp_UpdateAsset(?, ?, ?, ?, ?);";
-    await db.query(query, [
-      data.update_asset_id,
-      data.update_asset_name,
-      data.update_asset_type,
-      data.update_asset_status,
-      data.update_asset_value,
-    ]);
+app.post('/assets/update', async function (req, res) {
+    try {
+        // Parse frontend form information
+        const data = req.body;
 
-    console.log(
-      `UPDATE Asset. ID: ${data.update_asset_id} ` +
-        `NAME: ${data.update_asset_name}`
-    );
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = 'CALL sp_UpdateAsset(?, ?, ?, ?, ?);';
+        await db.query(query, [
+            data.update_asset_id,
+            data.update_asset_name,
+            data.update_asset_type,
+            data.update_asset_status,
+            data.update_asset_value,
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/assets");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        ]);
+
+        console.log(`UPDATE Asset. ID: ${data.update_asset_id} ` +
+            `NAME: ${data.update_asset_name}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/assets');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/locations/update", async function (req, res) {
-  try {
-    // Parse frontend form information
-    const data = req.body;
+app.post('/locations/update', async function (req, res) {
+    try {
+        // Parse frontend form information
+        const data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = "CALL sp_UpdateLocation(?, ?, ?, ?, ?);";
-    await db.query(query, [
-      data.update_location_id,
-      data.update_location_lat,
-      data.update_location_long,
-      data.update_location_name,
-      data.update_location_building_type,
-    ]);
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = 'CALL sp_UpdateLocation(?, ?, ?, ?, ?);';
+        await db.query(query, [
+            data.update_location_id,
+            data.update_location_lat,
+            data.update_location_long,
+            data.update_location_name,
+            data.update_location_building_type,
 
-    console.log(
-      `UPDATE Location. ID: ${data.update_location_id} ` +
-        `NAME: ${data.update_location_name}`
-    );
+        ]);
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/locations");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        console.log(`UPDATE Location. ID: ${data.update_location_id} ` +
+            `NAME: ${data.update_location_name}`
+        );
+
+        // Redirect the user to the updated webpage data
+        res.redirect('/locations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/megacorporationshaslocations/update", async function (req, res) {
-  try {
-    // Parse frontend form information
-    const data = req.body;
+app.post('/megacorporationshaslocations/update', async function (req, res) {
+    try {
+        // Parse frontend form information
+        const data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = "CALL sp_UpdateMegacorporationsHasLocations(?, ?, ?, ?);";
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = 'CALL sp_UpdateMegacorporationsHasLocations(?, ?, ?, ?);';
 
-    await db.query(query, [
-      data.update_megacorp_id,
-      data.update_location_id,
-      data.update_new_megacorp_id,
-      data.update_new_location_id,
-    ]);
+        await db.query(query, [
+            data.update_megacorp_id,
+            data.update_location_id,
+            data.update_new_megacorp_id,
+            data.update_new_location_id
+        ]);
 
-    console.log(
-      `UPDATE Megacorporation:Location relationship. Megacorporation ID: ${data.update_new_megacorp_id} ` +
-        `Location ID: ${data.update_new_location_id}`
-    );
+        console.log(`UPDATE Megacorporation:Location relationship. Megacorporation ID: ${data.update_new_megacorp_id} ` +
+            `Location ID: ${data.update_new_location_id}`
+        );
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/megacorporationshaslocations");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries");
-  }
+        // Redirect the user to the updated webpage data
+        res.redirect('/megacorporationshaslocations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries'
+        );
+    }
 });
 
-app.post("/breacheshascyberagents/update", async function (req, res) {
-  try {
-    // Parse frontend form information
-    const data = req.body;
+app.post('/breacheshascyberagents/update', async function (req, res) {
+    try {
+        // Parse frontend form information
+        const data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = "CALL sp_UpdateBreachesHasCyberAgents(?, ?, ?, ?);";
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = 'CALL sp_UpdateBreachesHasCyberAgents(?, ?, ?, ?);';
 
-    await db.query(query, [
-      data.update_breach_id,
-      data.update_agent_id,
-      data.update_new_breach_id,
-      data.update_new_agent_id,
-    ]);
+        await db.query(query, [
+            data.update_breach_id,
+            data.update_agent_id,
+            data.update_new_breach_id,
+            data.update_new_agent_id
+        ]);
 
-    console.log(
-      `UPDATE Breach:Agent relationship. Agent ID: ${data.update_new_agent_id} ` +
-        `Breach ID: ${data.update_new_breach_id}`
-    );
+        console.log(`UPDATE Breach:Agent relationship. Agent ID: ${data.update_new_agent_id} ` +
+            `Breach ID: ${data.update_new_breach_id}`
+        );
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/breacheshascyberagents");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries");
-  }
+        // Redirect the user to the updated webpage data
+        res.redirect('/breacheshascyberagents');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries'
+        );
+    }
 });
 
-app.post("/assetshasbreaches/update", async function (req, res) {
-  try {
-    // Parse frontend form information
-    const data = req.body;
+app.post('/assetshasbreaches/update', async function (req, res) {
+    try {
+        // Parse frontend form information
+        const data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = "CALL sp_UpdateAssetsHasBreaches(?, ?, ?, ?);";
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = 'CALL sp_UpdateAssetsHasBreaches(?, ?, ?, ?);';
 
-    await db.query(query, [
-      data.update_asset_id,
-      data.update_breach_id,
-      data.update_new_asset_id,
-      data.update_new_breach_id,
-    ]);
+        await db.query(query, [
+            data.update_asset_id,
+            data.update_breach_id,
+            data.update_new_asset_id,
+            data.update_new_breach_id
+        ]);
 
-    console.log(
-      `UPDATE Asser:Breach relationship. Asset ID: ${data.update_new_asset_id} ` +
-        `Breach ID: ${data.update_new_breach_id}`
-    );
+        console.log(`UPDATE Asser:Breach relationship. Asset ID: ${data.update_new_asset_id} ` +
+            `Breach ID: ${data.update_new_breach_id}`
+        );
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/assetshasbreaches");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries");
-  }
+        // Redirect the user to the updated webpage data
+        res.redirect('/assetshasbreaches');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries'
+        );
+    }
 });
+
+
+
 
 // DELETE ROUTES
-app.post("/megacorporations/delete", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/megacorporations/delete', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_DeleteMegacorporation(?);`;
-    await db.query(query, [data.delete_megacorp_id]);
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_DeleteMegacorporation(?);`;
+        await db.query(query, [data.delete_megacorp_id]);
 
-    console.log(
-      `DELETE Megacorporation. ID: ${data.delete_megacorp_id} ` +
-        `Name: ${data.delete_megacorp_name}`
-    );
+        console.log(`DELETE Megacorporation. ID: ${data.delete_megacorp_id} ` +
+            `Name: ${data.delete_megacorp_name}`
+        );
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/megacorporations");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        // Redirect the user to the updated webpage data
+        res.redirect('/megacorporations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/breaches/delete", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/breaches/delete', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_DeleteBreach(?);`;
-    await db.query(query, [data.delete_breach_id]);
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_DeleteBreach(?);`;
+        await db.query(query, [data.delete_breach_id]);
 
-    console.log(
-      `DELETE Breach. ID: ${data.delete_breach_id} ` +
-        `Name: ${data.delete_date_of_breach}`
-    );
+        console.log(`DELETE Breach. ID: ${data.delete_breach_id} ` +
+            `Name: ${data.delete_date_of_breach}`
+        );
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/breaches");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        // Redirect the user to the updated webpage data
+        res.redirect('/breaches');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/cyberagents/delete", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/cyberagents/delete', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_DeleteCyberAgent(?);`;
-    await db.query(query, [data.delete_agent_id]);
-    console.log(data);
-    console.log(
-      `DELETE CyberAgent. ID: ${data.delete_agent_id} ` +
-        `Name: ${data.delete_agent_name}`
-    );
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_DeleteCyberAgent(?);`;
+        await db.query(query, [data.delete_agent_id]);
+        console.log(data)
+        console.log(`DELETE CyberAgent. ID: ${data.delete_agent_id} ` +
+            `Name: ${data.delete_agent_name}`
+        );
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/cyberagents");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        // Redirect the user to the updated webpage data
+        res.redirect('/cyberagents');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/assets/delete", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/assets/delete', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_DeleteAsset(?);`;
-    await db.query(query, [data.delete_asset_id]);
-    console.log(data);
-    console.log(
-      `DELETE Asset. ID: ${data.delete_asset_id} ` +
-        `Name: ${data.delete_asset_name}`
-    );
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_DeleteAsset(?);`;
+        await db.query(query, [data.delete_asset_id]);
+        console.log(data)
+        console.log(`DELETE Asset. ID: ${data.delete_asset_id} ` +
+            `Name: ${data.delete_asset_name}`
+        );
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/assets");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        // Redirect the user to the updated webpage data
+        res.redirect('/assets');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/locations/delete", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/locations/delete', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_DeleteLocation(?);`;
-    await db.query(query, [data.delete_location_id]);
-    console.log(data);
-    console.log(
-      `DELETE Location. ID: ${data.delete_location_id} ` +
-        `Name: ${data.delete_location_name}`
-    );
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_DeleteLocation(?);`;
+        await db.query(query, [data.delete_location_id]);
+        console.log(data)
+        console.log(`DELETE Location. ID: ${data.delete_location_id} ` +
+            `Name: ${data.delete_location_name}`
+        );
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/locations");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        // Redirect the user to the updated webpage data
+        res.redirect('/locations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/breacheshascyberagents/delete", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/breacheshascyberagents/delete', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_DeleteBreachesHasCyberAgents(?, ?);`;
-    await db.query(query, [data.delete_breach_id, data.delete_agent_id]);
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_DeleteBreachesHasCyberAgents(?, ?);`;
+        await db.query(query, [data.delete_breach_id, data.delete_agent_id]);
 
-    console.log(
-      `DELETE Breach:Agent relationship. Agent ID: ${data.delete_agent_id}, ` +
-        `Breach ID: ${data.delete_breach_id}`
-    );
+        console.log(`DELETE Breach:Agent relationship. Agent ID: ${data.delete_agent_id}, ` +
+            `Breach ID: ${data.delete_breach_id}`
+        );
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/breacheshascyberagents");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        // Redirect the user to the updated webpage data
+        res.redirect('/breacheshascyberagents');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/assetshasbreaches/delete", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/assetshasbreaches/delete', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_DeleteAssetsHasBreaches(?, ?);`;
-    await db.query(query, [data.delete_asset_id, data.delete_breach_id]);
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_DeleteAssetsHasBreaches(?, ?);`;
+        await db.query(query, [data.delete_asset_id, data.delete_breach_id]);
 
-    console.log(
-      `DELETE Asset:Breach relationship. Asset ID: ${data.delete_asset_id}, ` +
-        `Breach ID: ${data.delete_breach_id}`
-    );
+        console.log(`DELETE Asset:Breach relationship. Asset ID: ${data.delete_asset_id}, ` +
+            `Breach ID: ${data.delete_breach_id}`
+        );
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/assetshasbreaches");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        // Redirect the user to the updated webpage data
+        res.redirect('/assetshasbreaches');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
-app.post("/megacorporationshaslocations/delete", async function (req, res) {
-  try {
-    // Parse frontend form information
-    let data = req.body;
+app.post('/megacorporationshaslocations/delete', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
 
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_DeleteMegacorporationsHasLocations(?, ?);`;
-    await db.query(query, [data.delete_megacorp_id, data.delete_location_id]);
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_DeleteMegacorporationsHasLocations(?, ?);`;
+        await db.query(query, [data.delete_megacorp_id, data.delete_location_id]);
 
-    console.log(
-      `DELETE Megacorporation:Location relationship. Megacorporation ID: ${data.delete_megacorp_id}, ` +
-        `Location ID: ${data.delete_location_id}`
-    );
+        console.log(`DELETE Megacorporation:Location relationship. Megacorporation ID: ${data.delete_megacorp_id}, ` +
+            `Location ID: ${data.delete_location_id}`
+        );
 
-    // Redirect the user to the updated webpage data
-    res.redirect("/megacorporationshaslocations");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        // Redirect the user to the updated webpage data
+        res.redirect('/megacorporationshaslocations');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
 // RESET ROUTE
-app.post("/reset", async function (req, res) {
-  try {
-    // Create and execute our query
-    // Using parameterized queries (Prevents SQL injection attacks)
-    const query = `CALL sp_ResetDatabase();`;
-    await db.query(query);
+app.post('/reset', async function (req, res) {
+    try {
+        // Create and execute our query
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query = `CALL sp_ResetDatabase();`;
+        await db.query(query);
 
-    console.log(`Database reset`);
+        console.log(`Database reset`);
 
-    // Redirect the user to the updated webpage data (only Megacorp has CUD operations currently)
-    res.redirect("/");
-  } catch (error) {
-    console.error("Error executing queries:", error);
-    // Send a generic error message to the browser
-    res
-      .status(500)
-      .send("An error occurred while executing the database queries.");
-  }
+        // Redirect the user to the updated webpage data (only Megacorp has CUD operations currently)
+        res.redirect('/');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 
 // ########################################
 // ########## LISTENER
 
 app.listen(PORT, function () {
-  console.log(
-    "Express started on http://localhost:" +
-      PORT +
-      "; press Ctrl-C to terminate."
-  );
+    console.log(
+        'Express started on http://localhost:' +
+            PORT +
+            '; press Ctrl-C to terminate.'
+    );
 });

@@ -15,114 +15,70 @@
 
 {{! READ table }}
 <table>
-  <thead>
-    {{! Replace Attributes with header names }}
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Industry</th>
-      <th></th>
-    </tr>
-  </thead>
+    <thead>
+        {{! Replace Attributes with header names }}
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Industry</th>
+            <th></th>
+        </tr>
+    </thead>
 
-  <tbody>
-    {{! For each row, print the megacorp_id, name and industry }}
-    {{#each megacorporations}}
-      <tr>
-        <td>{{this.megacorp_id}}</td>
-        <td>{{this.name}}</td>
-        <td>{{this.industry}}</td>
+    <tbody>
+        {{! For each row, print the megacorp_id, name and industry }}
+        {{#each megacorporations}}
+        <tr>
+            <td>{{this.megacorp_id}}</td>
+            <td>{{this.name}}</td>
+            <td>{{this.industry}}</td>
 
-        {{! DELETE form }}
-        <form
-          id="delete_megacorp_form"
-          method="POST"
-          action="/megacorporations/delete"
-        >
-          <input
-            type="hidden"
-            name="delete_megacorp_id"
-            value="{{this.megacorp_id}}"
-          />
-          <input
-            type="hidden"
-            name="delete_megacorp_name"
-            value="{{this.name}}"
-          />
-          <td>
-            <button type="submit">
-              Delete
-            </button>
-          </td>
-        </form>
-      </tr>
-    {{/each}}
-  </tbody>
+            {{! DELETE form }}
+            <form id='delete_megacorp_form' method='POST' action='/megacorporations/delete'>
+                <input type='hidden' name='delete_megacorp_id' value='{{this.megacorp_id}}' />
+                <input type='hidden' name='delete_megacorp_name' value='{{this.name}}' />
+                <td>
+                    <button type='submit'>
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {{/each}}
+    </tbody>
 </table>
 
 {{! CREATE form }}
 <h2>Create a Megacorporation</h2>
-<form
-  class="cuForm"
-  id="create_megacorp_form"
-  method="POST"
-  action="/megacorporations/create"
->
-  <label for="create_megacorp_name">Name: </label>
-  <input
-    type="text"
-    name="create_megacorp_name"
-    id="create_megacorp_name"
-    required
-  />
+<form class='cuForm' id='create_megacorp_form' method='POST' action='/megacorporations/create'>
+    <label for='create_megacorp_name'>Name: </label>
+    <input type='text' name='create_megacorp_name' id='create_megacorp_name' required />
 
-  <label for="create_megacorp_industry">Industry: </label>
-  <input
-    type="text"
-    name="create_megacorp_industry"
-    id="create_megacorp_industry"
-    required
-  />
+    <label for='create_megacorp_industry'>Industry: </label>
+    <input type='text' name='create_megacorp_industry' id='create_megacorp_industry' required />
 
-  <input type="submit" />
+    <input type='submit' />
 </form>
 
 {{! UPDATE form }}
 <h2>Update a Megacorporation</h2>
-<form
-  class="cuForm"
-  id="update_megacorp_form"
-  method="POST"
-  action="/megacorporations/update"
->
-  <label for="update_megacorp_id">Megacorporation: </label>
-  <select name="update_megacorp_id" id="update_megacorp_id" required>
-    {{! Select megacorp drop-down option }}
-    <option value="" disabled selected>Select a Megacorporation</option>
-    {{#each megacorporations}}
-      <option value="{{this.megacorp_id}}" required>
-        {{this.megacorp_id}}
-        -
-        {{this.name}}
-      </option>
-    {{/each}}
-  </select>
+<form class='cuForm' id='update_megacorp_form' method='POST' action='/megacorporations/update'>
+    <label for='update_megacorp_id'>Megacorporation: </label>
+    <select name='update_megacorp_id' id='update_megacorp_id' required>
+        {{! Select megacorp drop-down option }}
+        <option value='' disabled selected>Select a Megacorporation</option>
+        {{#each megacorporations}}
+        <option value='{{this.megacorp_id}}' required>
+            {{this.megacorp_id}} - {{this.name}}
+        </option>
+        {{/each}}
+    </select>
 
-  <label for="update_megacorp_name">Name: </label>
-  <input
-    type="text"
-    name="update_megacorp_name"
-    id="update_megacorp_name"
-    required
-  />
+    <label for='update_megacorp_name'>Name: </label>
+    <input type='text' name='update_megacorp_name' id='update_megacorp_name' required />
 
-  <label for="update_megacorp_industry">Industry: </label>
-  <input
-    type="text"
-    name="update_megacorp_industry"
-    id="update_megacorp_industry"
-    required
-  />
+    <label for='update_megacorp_industry'>Industry: </label>
+    <input type='text' name='update_megacorp_industry' id='update_megacorp_industry' required />
 
-  <input type="submit" />
+    <input type='submit' />
 </form>

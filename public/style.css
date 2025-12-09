@@ -5,60 +5,34 @@
 // Source URL: https://canvas.oregonstate.edu/courses/2017561/pages/exploration-web-application-technology-2?module_item_id=25645131 */
 
 body {
-  background-color: black;
+    background-color: black;
 }
 
-h1,
-h2,
-nav,
-p,
-table,
-form {
-  font-family: "Courier New", monospace;
-  color: white;
-}
+h1, h2, nav, p, table, form {
+    font-family: "Courier New", monospace;
+    color: white;
+} 
 
-h1,
-h2 {
-  margin-left: 16px;
+h1, h2 { 
+    margin-left: 16px;
 }
-table {
-  border-collapse: collapse;
-  margin-left: 32px;
+table {border-collapse: collapse;margin-left: 32px;}
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
 }
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 12px;
-  text-align: center;
-}
-th {
-  background-color: #434343;
-}
-tr:nth-child(even) {
-  background-color: #1c1c1c;
-}
-.cuForm {
-  margin-left: 32px;
-}
-input,
-select {
-  margin-bottom: 4px;
-  margin-right: 12px;
-}
-nav {
-  background-color: #666666;
-  padding: 16px;
-}
-a {
-  margin-left: 16px;
-}
+th {background-color: #434343;}
+tr:nth-child(even) {background-color: #1c1c1c;}
+.cuForm { margin-left: 32px;}
+input, select { margin-bottom: 4px;margin-right: 12px;}
+nav { 
+    background-color: #666666;
+    padding: 16px;}
+a {margin-left: 16px;}
 
-nav a,
-nav a:visited {
-  color: white;
-  white-space: nowrap;
+nav a, nav a:visited {
+    color: white;
+    white-space: nowrap;
 }
-.homepageDescription {
-  margin-left: 32px;
-}
+.homepageDescription {margin-left: 32px;}
