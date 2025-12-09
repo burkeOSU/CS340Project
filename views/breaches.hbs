@@ -1,126 +1,202 @@
-{{!-- # Citation for this file:
+{{! # Citation for this file:
 # Date: 11/04/2025
-# Based on:
-# Source URL: https://canvas.oregonstate.edu/courses/2017561/pages/exploration-web-application-technology-2?module_item_id=25645131 --}}
-
-
+# Based on: Exploration - Web Application Technology
+# Source URL: https://canvas.oregonstate.edu/courses/2017561/pages/exploration-web-application-technology-2?module_item_id=25645131
+#
+# Date: 11/17/2025
+# Based on: “Exploration - Implementing CUD operations in your app.
+# Source URL: https://canvas.oregonstate.edu/courses/2017561/pages/exploration-implementing-cud-operations-in-your-app?module_item_id=25645149 }}
 
 <h1>Breaches</h1>
 
 {{! READ table }}
 <table>
-    <thead>
-        {{! Replace Attributes with header names for header row}}
-        <tr>
-            <th>ID</th>
-            <th>Datetime of Breach</th>
-            <th>Is Breach Ongoing?</th>
-            <th>Hack Type</th>
-            <th>Severity Level</th>
-            <th>Was Breach Successfull?</th>
-            <th>Megacorporation Breached</th>
-            <th></th>
-        </tr>
-    </thead>
+  <thead>
+    {{! Replace Attributes with header names for header row}}
+    <tr>
+      <th>ID</th>
+      <th>Datetime of Breach</th>
+      <th>Is Breach Ongoing?</th>
+      <th>Hack Type</th>
+      <th>Severity Level</th>
+      <th>Was Breach Successfull?</th>
+      <th>Megacorporation Breached</th>
+      <th></th>
+    </tr>
+  </thead>
 
-    <tbody>
-        {{! For each row, print the breach_id, date of breach, ongoing status, hack type, severity level, success and megacorp breached }}
-        {{#each breaches}}
-        <tr>
-            <td>{{this.breach_id}}</td>
-            <td>{{this.date_of_breach}}</td>
-            <td>{{this.ongoing}}</td>
-            <td>{{this.hack_type}}</td>
-            <td>{{this.severity_level}}</td>
-            <td>{{this.success}}</td>
-            <td>{{this.megacorp_name}}</td>
+  <tbody>
+    {{! For each row, print the breach_id, date of breach, ongoing status, hack type, severity level, success and megacorp breached }}
+    {{#each breaches}}
+      <tr>
+        <td>{{this.breach_id}}</td>
+        <td>{{this.date_of_breach}}</td>
+        <td>{{this.ongoing}}</td>
+        <td>{{this.hack_type}}</td>
+        <td>{{this.severity_level}}</td>
+        <td>{{this.success}}</td>
+        <td>{{this.megacorp_name}}</td>
 
-            {{! DELETE form }}
-            <form id='delete_breach_form' method='POST' action='/breaches/delete'>
-                <input type='hidden' name='delete_breach_id' value='{{this.breach_id}}' />
-                <input type='hidden' name='delete_date_of_breach' value='{{this.date_of_breach}}' />
-                <td>
-                    <button type='submit'>
-                        Delete
-                    </button>
-                </td>
-            </form>
-        </tr>
-        {{/each}}
-    </tbody>
+        {{! DELETE form }}
+        <form id="delete_breach_form" method="POST" action="/breaches/delete">
+          <input
+            type="hidden"
+            name="delete_breach_id"
+            value="{{this.breach_id}}"
+          />
+          <input
+            type="hidden"
+            name="delete_date_of_breach"
+            value="{{this.date_of_breach}}"
+          />
+          <td>
+            <button type="submit">
+              Delete
+            </button>
+          </td>
+        </form>
+      </tr>
+    {{/each}}
+  </tbody>
 </table>
 
 {{! CREATE form }}
 <h2>Create a Breach</h2>
-<form class='cuForm' id='create_breach_form' method='POST' action='/breaches/create'>
-    <label for='create_breach_date_of_breach'>Date of Breach: </label>
-    <input type='datetime-local' name='create_breach_date_of_breach' id='create_breach_date_of_breach' required />
+<form
+  class="cuForm"
+  id="create_breach_form"
+  method="POST"
+  action="/breaches/create"
+>
+  <label for="create_breach_date_of_breach">Date of Breach: </label>
+  <input
+    type="datetime-local"
+    name="create_breach_date_of_breach"
+    id="create_breach_date_of_breach"
+    required
+  />
 
-    <label for='create_breach_ongoing'>Ongoing: </label>
-    <input type='checkbox' name='create_breach_ongoing' id='create_breach_ongoing' />
+  <label for="create_breach_ongoing">Ongoing: </label>
+  <input
+    type="checkbox"
+    name="create_breach_ongoing"
+    id="create_breach_ongoing"
+  />
 
-    <label for='create_breach_hack_type'>Hack Type: </label>
-    <input type='text' name='create_breach_hack_type' id='create_breach_hack_type' />
+  <label for="create_breach_hack_type">Hack Type: </label>
+  <input
+    type="text"
+    name="create_breach_hack_type"
+    id="create_breach_hack_type"
+  />
 
-    <label for='create_breach_severity_level'>Severity Level: </label>
-    <input type='text' name='create_breach_severity_level' id='create_breach_severity_level' />
+  <label for="create_breach_severity_level">Severity Level: </label>
+  <input
+    type="text"
+    name="create_breach_severity_level"
+    id="create_breach_severity_level"
+  />
 
-    <label for='create_breach_success'>Success: </label>
-    <input type='checkbox' name='create_breach_success' id='create_breach_success' />
+  <label for="create_breach_success">Success: </label>
+  <input
+    type="checkbox"
+    name="create_breach_success"
+    id="create_breach_success"
+  />
 
-    <label for='create_breach_megacorp_id'>Megacorporation Breached: </label>
-    <select name='create_breach_megacorp_id' id='create_breach_megacorp_id' required>
-        {{! Select Megacorporation drop-down option }}
-        <option value='' disabled selected>Select a Megacorporation</option>
-        {{#each megacorporations}}
-        <option value='{{this.megacorp_id}}' required>
-            {{this.megacorp_id}} - {{this.megacorp_name}}
-        </option>
-        {{/each}}
-    </select>
-    
-    <input type='submit' />
+  <label for="create_breach_megacorp_id">Megacorporation Breached: </label>
+  <select
+    name="create_breach_megacorp_id"
+    id="create_breach_megacorp_id"
+    required
+  >
+    {{! Select Megacorporation drop-down option }}
+    <option value="" disabled selected>Select a Megacorporation</option>
+    {{#each megacorporations}}
+      <option value="{{this.megacorp_id}}" required>
+        {{this.megacorp_id}}
+        -
+        {{this.megacorp_name}}
+      </option>
+    {{/each}}
+  </select>
+
+  <input type="submit" />
 </form>
 
 {{! UPDATE form }}
 <h2>Update a Breach</h2>
-<form class='cuForm' id='update_breach_form'  method='POST' action='/breaches/update'>
-    <label for='update_breach_id'>Breach to Update: </label>
-    <select name='update_breach_id' id='update_breach_id' required>
-        {{! Select breach drop-down option }}
-        <option value='' disabled selected>Select a Breach</option>
-        {{#each breaches}}
-        <option value='{{this.breach_id}}'>
-            {{this.breach_id}} - {{this.date_of_breach}}
-        </option>
-        {{/each}}
-    </select>
+<form
+  class="cuForm"
+  id="update_breach_form"
+  method="POST"
+  action="/breaches/update"
+>
+  <label for="update_breach_id">Breach to Update: </label>
+  <select name="update_breach_id" id="update_breach_id" required>
+    {{! Select breach drop-down option }}
+    <option value="" disabled selected>Select a Breach</option>
+    {{#each breaches}}
+      <option value="{{this.breach_id}}">
+        {{this.breach_id}}
+        -
+        {{this.date_of_breach}}
+      </option>
+    {{/each}}
+  </select>
 
-    <label for='update_breach_date_of_breach'>Date of Breach: </label>
-    <input type='datetime-local' name='update_breach_date_of_breach' id='update_breach_date_of_breach' required />
+  <label for="update_breach_date_of_breach">Date of Breach: </label>
+  <input
+    type="datetime-local"
+    name="update_breach_date_of_breach"
+    id="update_breach_date_of_breach"
+    required
+  />
 
-    <label for='update_breach_ongoing'>Ongoing: </label>
-    <input type='checkbox' name='update_breach_ongoing' id='update_breach_ongoing' />
+  <label for="update_breach_ongoing">Ongoing: </label>
+  <input
+    type="checkbox"
+    name="update_breach_ongoing"
+    id="update_breach_ongoing"
+  />
 
-    <label for='update_breach_hack_type'>Hack Type: </label>
-    <input type='text' name='update_breach_hack_type' id='update_breach_hack_type' />
+  <label for="update_breach_hack_type">Hack Type: </label>
+  <input
+    type="text"
+    name="update_breach_hack_type"
+    id="update_breach_hack_type"
+  />
 
-    <label for='update_breach_severity_level'>Severity Level: </label>
-    <input type='text' name='update_breach_severity_level' id='update_breach_severity_level' />
+  <label for="update_breach_severity_level">Severity Level: </label>
+  <input
+    type="text"
+    name="update_breach_severity_level"
+    id="update_breach_severity_level"
+  />
 
-    <label for='update_breach_success'>Success: </label>
-    <input type='checkbox' name='update_breach_success' id='update_breach_success' />
+  <label for="update_breach_success">Success: </label>
+  <input
+    type="checkbox"
+    name="update_breach_success"
+    id="update_breach_success"
+  />
 
-    <label for='update_breach_megacorp_id'>Megacorporation Breached: </label>
-    <select name='update_breach_megacorp_id' id='update_breach_megacorp_id' required>
-        {{! Select megacorporation drop-down option }}
-        <option value='' disabled selected>Select a Megacorporation</option>
-        {{#each megacorporations}}
-        <option value='{{this.megacorp_id}}' required>
-            {{this.megacorp_id}} - {{this.megacorp_name}}
-        </option>
-        {{/each}}
-    </select>
+  <label for="update_breach_megacorp_id">Megacorporation Breached: </label>
+  <select
+    name="update_breach_megacorp_id"
+    id="update_breach_megacorp_id"
+    required
+  >
+    {{! Select megacorporation drop-down option }}
+    <option value="" disabled selected>Select a Megacorporation</option>
+    {{#each megacorporations}}
+      <option value="{{this.megacorp_id}}" required>
+        {{this.megacorp_id}}
+        -
+        {{this.megacorp_name}}
+      </option>
+    {{/each}}
+  </select>
 
-    <input type='submit' />
+  <input type="submit" />
 </form>

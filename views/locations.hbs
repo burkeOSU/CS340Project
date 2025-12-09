@@ -1,93 +1,164 @@
-{{!-- # Citation for this file:
+{{! # Citation for this file:
 # Date: 11/04/2025
-# Based on:
-# Source URL: https://canvas.oregonstate.edu/courses/2017561/pages/exploration-web-application-technology-2?module_item_id=25645131 --}}
-
+# Based on: Exploration - Web Application Technology
+# Source URL: https://canvas.oregonstate.edu/courses/2017561/pages/exploration-web-application-technology-2?module_item_id=25645131
+#
+# Date: 11/17/2025
+# Based on: “Exploration - Implementing CUD operations in your app.
+# Source URL: https://canvas.oregonstate.edu/courses/2017561/pages/exploration-implementing-cud-operations-in-your-app?module_item_id=25645149 }}
 
 <h1>Locations</h1>
 
 {{! READ table }}
 <table>
-    <thead>
-        {{! Replace Attributes with header names for header row}}
-        <tr>
-            <th>ID</th>
-            <th>Latitude</th>
-            <th>Longitude</th>
-            <th>Name</th>
-            <th>Building Type</th>
-            <th></th>
-        </tr>
-    </thead>
+  <thead>
+    {{! Replace Attributes with header names for header row}}
+    <tr>
+      <th>ID</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>Name</th>
+      <th>Building Type</th>
+      <th></th>
+    </tr>
+  </thead>
 
-    <tbody>
-        {{! For each row, print the location_id, latitude, longitude, name and building type }}
-        {{#each locations}}
-        <tr>
-            <td>{{this.location_id}}</td>
-            <td>{{this.lat}}</td>
-            <td>{{this.long}}</td>
-            <td>{{this.name}}</td>
-            <td>{{this.building_type}}</td>
+  <tbody>
+    {{! For each row, print the location_id, latitude, longitude, name and building type }}
+    {{#each locations}}
+      <tr>
+        <td>{{this.location_id}}</td>
+        <td>{{this.lat}}</td>
+        <td>{{this.long}}</td>
+        <td>{{this.name}}</td>
+        <td>{{this.building_type}}</td>
 
-            {{! DELETE form }}
-            <form id='delete_location_form' method='POST' action='/locations/delete'>
-                <input type='hidden' name='delete_location_id' value='{{this.location_id}}' />
-                <input type='hidden' name='delete_location_name' value='{{this.name}}' />
-                <td>
-                    <button type='submit'>
-                        Delete
-                    </button>
-                </td>
-            </form>
-        </tr>
-        {{/each}}
-    </tbody>
+        {{! DELETE form }}
+        <form
+          id="delete_location_form"
+          method="POST"
+          action="/locations/delete"
+        >
+          <input
+            type="hidden"
+            name="delete_location_id"
+            value="{{this.location_id}}"
+          />
+          <input
+            type="hidden"
+            name="delete_location_name"
+            value="{{this.name}}"
+          />
+          <td>
+            <button type="submit">
+              Delete
+            </button>
+          </td>
+        </form>
+      </tr>
+    {{/each}}
+  </tbody>
 </table>
 
 {{! CREATE form }}
 <h2>Create a Location</h2>
-<form class='cuForm' id='create_location_form' method='POST' action='/locations/create'>
-    <label for='create_location_lat'>Latitude: </label>
-    <input type='number' step='0.00000001' name='create_location_lat' id='create_location_lat' required />
+<form
+  class="cuForm"
+  id="create_location_form"
+  method="POST"
+  action="/locations/create"
+>
+  <label for="create_location_lat">Latitude: </label>
+  <input
+    type="number"
+    step="0.00000001"
+    name="create_location_lat"
+    id="create_location_lat"
+    required
+  />
 
-    <label for='create_location_long'>Longitude: </label>
-    <input type='number' step='0.00000001' name='create_location_long' id='create_location_long' required />
+  <label for="create_location_long">Longitude: </label>
+  <input
+    type="number"
+    step="0.00000001"
+    name="create_location_long"
+    id="create_location_long"
+    required
+  />
 
-    <label for='create_location_name'>Name: </label>
-    <input type='text' name='create_location_name' id='create_location_name' required />
+  <label for="create_location_name">Name: </label>
+  <input
+    type="text"
+    name="create_location_name"
+    id="create_location_name"
+    required
+  />
 
-    <label for='create_location_building_type'>Building Type: </label>
-    <input type='text' name='create_location_building_type' id='create_location_building_type' required />
+  <label for="create_location_building_type">Building Type: </label>
+  <input
+    type="text"
+    name="create_location_building_type"
+    id="create_location_building_type"
+    required
+  />
 
-    <input type='submit' />
+  <input type="submit" />
 </form>
 
 {{! UPDATE form }}
 <h2>Update a Location</h2>
-<form class='cuForm' id='update_location_form' method='POST' action='/locations/update'>
-    <label for='update_location_id'>Location to Update: </label>
-    <select name='update_location_id' id='update_location_id' required>
-        {{! Select location drop-down option }}
-        <option value='' disabled selected>Select a Location</option>
-        {{#each locations}}
-        <option value='{{this.location_id}}'>
-            {{this.location_id}} - {{this.name}}
-        </option>
-        {{/each}}
-    </select>
+<form
+  class="cuForm"
+  id="update_location_form"
+  method="POST"
+  action="/locations/update"
+>
+  <label for="update_location_id">Location to Update: </label>
+  <select name="update_location_id" id="update_location_id" required>
+    {{! Select location drop-down option }}
+    <option value="" disabled selected>Select a Location</option>
+    {{#each locations}}
+      <option value="{{this.location_id}}">
+        {{this.location_id}}
+        -
+        {{this.name}}
+      </option>
+    {{/each}}
+  </select>
 
-    <label for='update_location_lat'>Latitude: </label>
-    <input type='number' step='0.00000001' name='update_location_lat' id='update_location_lat' required />
+  <label for="update_location_lat">Latitude: </label>
+  <input
+    type="number"
+    step="0.00000001"
+    name="update_location_lat"
+    id="update_location_lat"
+    required
+  />
 
-    <label for='update_location_long'>Longitude: </label>
-    <input type='number' step='0.00000001' name='update_location_long' id='update_location_long' required />
+  <label for="update_location_long">Longitude: </label>
+  <input
+    type="number"
+    step="0.00000001"
+    name="update_location_long"
+    id="update_location_long"
+    required
+  />
 
-    <label for='update_location_name'>Name: </label>
-    <input type='text' name='update_location_name' id='update_location_name' required />
+  <label for="update_location_name">Name: </label>
+  <input
+    type="text"
+    name="update_location_name"
+    id="update_location_name"
+    required
+  />
 
-    <label for='update_location_building_type'>Building Type: </label>
-    <input type='text' name='update_location_building_type' id='update_location_building_type' required />
+  <label for="update_location_building_type">Building Type: </label>
+  <input
+    type="text"
+    name="update_location_building_type"
+    id="update_location_building_type"
+    required
+  />
 
-    <input type='submit' />
+  <input type="submit" />
 </form>
